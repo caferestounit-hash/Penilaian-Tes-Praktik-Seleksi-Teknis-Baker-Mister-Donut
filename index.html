@@ -1458,7 +1458,7 @@
                         <p style="margin: 0;"><b>Hal yang perlu dipertahankan:</b><br/>${s14.strengths || '-'}</p>
                     </div>
                     
-                    <h3 style="font-size: 12px; font-weight: bold; background: #fef0c7; padding: 5px 10px; border-left: 4px solid #79310e; margin-bottom: 10px;">2. TES PRAKTIK MOCHIDO</h3>
+                    <div style="page-break-before: always; padding-top: 20px;"></div><h3 style="font-size: 12px; font-weight: bold; background: #eaddd7; padding: 5px 10px; border-left: 4px solid #362219; margin-bottom: 10px;">2. TES PRAKTIK MOCHIDO</h3>
                     <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 10px;">
                         <tr><th style="border: 1px solid #ccc; padding: 5px; width: 30px; text-align: center; background: #fffbf0;">NO</th><th style="border: 1px solid #ccc; padding: 5px; text-align: left; background: #fffbf0;">Keterangan</th><th style="border: 1px solid #ccc; padding: 5px; width: 40px; text-align: center; background: #fffbf0;">Point</th><th style="border: 1px solid #ccc; padding: 5px; width: 50px; text-align: center; background: #fffbf0;">Nilai</th></tr>`;
                 
@@ -1477,7 +1477,7 @@
                 html += `<tr><td colspan="3" style="border: 1px solid #ccc; padding: 5px; text-align: right; font-weight: bold; background: #fffbf0;">Nilai Akhir (Total / 4):</td><td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold; color: #d32f2f;">${avgMoc}</td></tr></table>
                     <div style="font-size: 10px; margin-bottom: 20px; padding: 5px; border-bottom: 1px dotted #ccc;"><b>Komentar Shift (Mochido):</b> ${window.globalStore.commentsMochido || '-'}</div>
                     
-                    <h3 style="font-size: 12px; font-weight: bold; background: #fef0c7; padding: 5px 10px; border-left: 4px solid #79310e; margin-bottom: 10px;">3. TES PRAKTIK YEAST</h3>
+                    <div style="page-break-before: always; padding-top: 20px;"></div><h3 style="font-size: 12px; font-weight: bold; background: #eaddd7; padding: 5px 10px; border-left: 4px solid #362219; margin-bottom: 10px;">3. TES PRAKTIK YEAST</h3>
                     <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 10px;">
                         <tr><th style="border: 1px solid #ccc; padding: 5px; width: 30px; text-align: center; background: #fffbf0;">NO</th><th style="border: 1px solid #ccc; padding: 5px; width: 80px; text-align: center; background: #fffbf0;">Kategori</th><th style="border: 1px solid #ccc; padding: 5px; text-align: left; background: #fffbf0;">Keterangan</th><th style="border: 1px solid #ccc; padding: 5px; width: 40px; text-align: center; background: #fffbf0;">Point</th><th style="border: 1px solid #ccc; padding: 5px; width: 50px; text-align: center; background: #fffbf0;">Nilai</th></tr>`;
                 
@@ -1498,8 +1498,7 @@
                 html += `<tr><td colspan="4" style="border: 1px solid #ccc; padding: 5px; text-align: right; font-weight: bold; background: #fffbf0;">Nilai Akhir (Total / 4):</td><td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold; color: #d32f2f;">${avgYst}</td></tr></table>
                     <div style="font-size: 10px; margin-bottom: 20px; padding: 5px; border-bottom: 1px dotted #ccc;"><b>Komentar Shift (Yeast):</b> ${window.globalStore.commentsYeast || '-'}</div>
                     
-                    <div style="margin-top: 15px; font-size: 11px;">
-                        <p><b>Status Rekomendasi Mentor:</b> <span style="padding: 2px 6px; border: 1px solid #000; border-radius: 4px; font-weight: bold; background: ${s14.status === 'Tidak Diluluskan' ? '#fee2e2' : '#dcfce7'}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">${s14.status || 'Diluluskan'}</span></p>
+                    <div style="page-break-before: always; padding-top: 20px;"></div><div style="margin-top: 15px; font-size: 11px;"><p><b>Status Rekomendasi Mentor:</b> <span style="padding: 2px 6px; border: 1px solid #000; border-radius: 4px; font-weight: bold; background: ${s14.status === 'Tidak Diluluskan' ? '#fee2e2' : '#dcfce7'}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">${s14.status || 'Diluluskan'}</span></p>
                         ${s14.status === 'Tidak Diluluskan' ? `<p><b>Alasan Penolakan:</b> ${s14.rejectionReason || '-'}</p>` : ''}
                     </div>
                     
