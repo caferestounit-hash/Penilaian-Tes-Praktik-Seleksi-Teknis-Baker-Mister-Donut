@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Seleksi Teknis Baker Mister Donut</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        baker: {
+                            50: '#fffbf0', 100: '#fef0c7', 200: '#fde08b', 300: '#fbc753', 400: '#f9a826',
+                            500: '#f58a0b', 600: '#e16b06', 700: '#bb4c08', 800: '#953a0f', 900: '#79310e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @media screen {
+            #print-container { display: none !important; }
+        }
+        @media print {
+            body { background-color: #ffffff; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            body > div:not(#print-container):not(#notificationModal):not(#customConfirmModal) { display: none !important; }
+            #print-container { display: block !important; width: 100%; margin: 0; padding: 0; }
+            .page-break { page-break-before: always; }
+        }
+        .bg-pattern { background-image: radial-gradient(#bb4c08 1px, transparent 1px); background-size: 20px 20px; }
+    </style>
+</head>
+<body class="min-h-screen bg-baker-50 font-sans text-gray-800 selection:bg-baker-200">
+
+    <nav class="bg-white shadow-sm border-b border-baker-200 sticky top-0 z-40 no-print">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer truncate" onclick="if(window.userRole) window.showView('dashboard')">
+                <i data-lucide="donut" class="w-6 h-6 sm:w-8 sm:h-8 text-baker-800 shrink-0"></i>
+                <span class="font-black text-baker-900 text-sm sm:text-lg md:text-xl tracking-wide uppercase truncate">Seleksi Teknis Baker <span class="text-[#d32f2f]">Mister Donut</span></span>
+            </div>
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <div id="etd-notification-bell" class="relative hidden cursor-pointer" onclick="window.showETDNotifications()">
+                    <i data-lucide="bell" class="w-5 h-5 sm:w-6 sm:h-6 text-baker-800 hover:text-baker-600 transition-colors"></i>
+                    <div id="etd-notification-dot" class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-600 rounded-full hidden border-2 border-white"></div>
+                </div>
+                <span id="role-badge" class="hidden px-2 py-1 sm:px-3 sm:py-1 bg-baker-100 text-baker-800 font-black text-[10px] sm:text-xs rounded-lg uppercase tracking-wider border border-baker-200"></span>
+                <div id="auth-status-badge" class="flex items-center gap-1.5 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 bg-white border border-gray-200 rounded-full text-[10px] sm:text-xs font-bold text-gray-600 shadow-sm">
+                    <i data-lucide="loader-2" class="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-baker-600"></i> <span class="hidden sm:inline">Menghubungkan...</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="view-loading" class="flex flex-col items-center justify-center min-h-[80vh] no-print px-4 text-center">
+        <i data-lucide="loader-2" class="w-12 h-12 text-baker-800 animate-spin mb-4"></i>
+        <h2 class="text-xl font-black text-baker-900">Menyiapkan Aplikasi Baker...</h2>
+        <p class="text-baker-600 text-sm mt-2 font-medium">Menghubungkan ke Database & Master Data</p>
+    </div>
+
+    <div id="view-login" class="flex items-center justify-center min-h-[85vh] px-4 hidden no-print py-6 sm:py-8">
+        <div class="bg-baker-50 rounded-2xl sm:rounded-[2rem] shadow-2xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden border border-baker-200">
+            <div class="md:w-1/2 p-6 sm:p-8 flex flex-col items-center justify-center text-center relative border-b md:border-b-0 md:border-r border-baker-200 bg-baker-100">
+                <div class="absolute inset-0 opacity-10 pointer-events-none bg-pattern"></div>
+                <h2 class="text-xl sm:text-2xl font-black text-baker-900 mb-2 uppercase tracking-wide relative z-10 leading-tight">Selamat Datang</h2>
+                <p class="text-baker-800 text-xs sm:text-sm mb-4 sm:mb-6 font-semibold leading-relaxed relative z-10 px-2 sm:px-4">di Form Penilaian OJT Seleksi Teknis <b>Baker</b> Mister Donut.</p>
+                <div class="mb-4 sm:mb-6 relative z-10 w-full flex justify-center text-baker-800 opacity-90">
+                    <i data-lucide="donut" class="w-32 h-32 sm:w-40 sm:h-40 drop-shadow-lg"></i>
+                </div>
+                <img src="https://upload.wikimedia.org/wikipedia/id/thumb/4/41/Mister_Donut_logo.svg/1200px-Mister_Donut_logo.svg.png" alt="Mister Donut Logo" class="w-28 sm:w-36 object-contain relative z-10 drop-shadow-md" onerror="this.style.display='none'">
+            </div>
+            <div class="md:w-1/2 p-6 sm:p-12 flex flex-col justify-center bg-white relative z-10 sm:rounded-r-[2rem]">
+                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white border border-baker-100 rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-sm text-baker-800">
+                    <i data-lucide="key-round" class="w-6 h-6 sm:w-8 sm:h-8"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black text-baker-900 mb-2 uppercase">Akses Portal</h2>
+                <p class="text-baker-800 text-xs sm:text-sm mb-6 sm:mb-8 font-medium leading-relaxed">Silakan mengisi Keypass terkait peran yang Anda pilih untuk masuk ke dalam sistem.</p>
+                <div class="relative mb-4 sm:mb-6">
+                    <input type="password" id="input-keypass" onkeypress="if(event.key === 'Enter') window.handleLogin()" class="w-full p-3 sm:p-4 pr-12 border-2 border-baker-200 rounded-xl text-lg sm:text-xl tracking-widest font-bold focus:border-baker-600 focus:ring-4 focus:ring-baker-600/20 outline-none transition-all text-baker-900 bg-white" placeholder="••••••••">
+                    <button type="button" onclick="window.togglePasswordVisibility()" class="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-baker-400 hover:text-baker-800 focus:outline-none transition-colors cursor-pointer p-2">
+                        <i id="eye-icon" data-lucide="eye" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                    </button>
+                </div>
+                <button onclick="window.handleLogin()" class="w-full bg-gradient-to-r from-baker-600 to-baker-800 hover:from-baker-700 hover:to-baker-900 text-white font-black py-3.5 sm:py-4 rounded-xl transition-all shadow-lg hover:shadow-xl active:scale-95 uppercase tracking-wide cursor-pointer flex justify-center items-center gap-2 text-sm sm:text-base">
+                    <span>Masuk Portal</span> <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-dashboard" class="max-w-5xl mx-auto p-4 sm:p-6 mt-4 sm:mt-8 hidden no-print">
+        <div class="bg-gradient-to-br from-baker-700 to-baker-900 rounded-2xl sm:rounded-[2rem] p-6 sm:p-12 text-center text-white shadow-xl relative overflow-hidden mb-6 sm:mb-8 border border-baker-600">
+            <div class="absolute top-[-50px] left-[-50px] w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-[-50px] right-[-50px] w-64 h-64 bg-black opacity-30 rounded-full blur-3xl"></div>
+            <div class="relative z-10 flex flex-col items-center">
+                <div class="bg-white p-2.5 sm:p-3 rounded-2xl mb-4 sm:mb-6 shadow-lg inline-block">
+                    <img src="https://upload.wikimedia.org/wikipedia/id/thumb/4/41/Mister_Donut_logo.svg/1200px-Mister_Donut_logo.svg.png" alt="Mister Donut Logo" class="h-8 sm:h-12 object-contain" onerror="this.style.display='none'">
+                </div>
+                <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black mb-3 sm:mb-4 uppercase tracking-tight text-[#fffbf0] drop-shadow-md">Portal Penilaian Baker</h1>
+                <p class="text-baker-200 text-sm sm:text-lg max-w-2xl mx-auto font-medium mb-4 sm:mb-5 px-2">Sistem evaluasi praktik produksi (Mochido & Yeast) untuk Baker Mister Donut.</p>
+                <div class="inline-flex items-center gap-2 bg-black/40 px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-bold tracking-wider uppercase border border-white/10 backdrop-blur-sm">
+                    <i data-lucide="user-circle" class="w-3 h-3 sm:w-4 sm:h-4 text-baker-200"></i> Akses: <span id="dash-role-text" class="text-white"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="dashboard-cards-container">
+            <button id="card-buat" onclick="window.createNewAssessment()" class="group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-baker-500 transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-baker-100 text-baker-800 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform">
+                    <i data-lucide="file-plus-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Buat Penilaian Baru</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Mulai lembar penilaian teknis dan tes praktik Baker baru.</p>
+            </button>
+            <button id="card-draft" onclick="window.showView('drafts')" class="group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-blue-50 text-blue-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-blue-100">
+                    <i data-lucide="folder-clock" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Lanjutkan / Edit Draft</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Lanjutkan form penilaian yang sebelumnya disimpan sementara.</p>
+            </button>
+            <button id="card-history" onclick="window.showView('history')" class="group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-green-400 transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-50 text-green-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-green-100">
+                    <i data-lucide="check-circle-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase" id="history-card-title">Riwayat Terkirim</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" id="history-card-desc">Lihat daftar penilaian yang sudah final (Terkirim).</p>
+            </button>
+            <button id="card-rekapan" onclick="window.showView('rekapan')" class="group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-purple-400 transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-purple-50 text-purple-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-purple-100">
+                    <i data-lucide="clipboard-signature" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Rekap & Persetujuan</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Lihat rekapan nilai per batch dan berikan stempel persetujuan.</p>
+            </button>
+            <button id="card-hasil-mentor" onclick="window.showView('hasil-mentor')" class="group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-orange-400 transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-orange-50 text-orange-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-orange-100">
+                    <i data-lucide="book-open" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Hasil Penilaian Mentor</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Lihat form penilaian utuh per peserta yang disubmit oleh mentor.</p>
+            </button>
+            <button id="card-trash" onclick="window.showView('trash')" class="hidden group text-left bg-white rounded-2xl p-5 sm:p-8 border border-gray-200 shadow-sm hover:shadow-xl hover:border-red-400 transition-all duration-300 transform hover:-translate-y-1">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-red-50 text-red-700 rounded-xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform border border-red-100">
+                    <i data-lucide="trash-2" class="w-6 h-6 sm:w-7 sm:h-7"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2 uppercase">Tempat Sampah</h3>
+                <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Data yang dihapus (tersimpan sementara 30 hari).</p>
+            </button>
+        </div>
+    </div>
+
+    <div id="view-drafts" class="max-w-5xl mx-auto p-4 sm:p-6 mt-4 hidden no-print">
+        <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <button onclick="window.showView('dashboard')" class="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"><i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600"></i></button>
+            <div><h2 class="text-lg sm:text-2xl font-black text-gray-800 uppercase">Daftar Penilaian Tersimpan</h2><p class="text-xs sm:text-sm text-gray-500">Pilih dokumen draft di bawah ini untuk melanjutkan.</p></div>
+        </div>
+        <div id="draft-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <div id="view-history" class="max-w-5xl mx-auto p-4 sm:p-6 mt-4 hidden no-print">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button onclick="window.showView('dashboard')" class="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"><i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600"></i></button>
+                <div><h2 class="text-lg sm:text-2xl font-black text-gray-800 uppercase" id="history-view-title">Riwayat Penilaian</h2><p class="text-xs sm:text-sm text-gray-500" id="history-view-desc">Daftar form final.</p></div>
+            </div>
+        </div>
+        <div id="history-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <div id="view-trash" class="max-w-5xl mx-auto p-4 sm:p-6 mt-4 hidden no-print">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button onclick="window.showView('dashboard')" class="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"><i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600"></i></button>
+                <div><h2 class="text-lg sm:text-2xl font-black text-red-700 uppercase">Tempat Sampah</h2><p class="text-xs sm:text-sm text-gray-500">Data ini akan otomatis terhapus permanen setelah 30 hari.</p></div>
+            </div>
+        </div>
+        <div id="trash-list-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <div id="view-rekapan" class="max-w-[1400px] mx-auto p-4 sm:p-6 mt-4 hidden no-print">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 sm:mb-8 gap-4">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button onclick="window.showView('dashboard')" class="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shrink-0"><i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600"></i></button>
+                <div><h2 class="text-lg sm:text-2xl font-black text-gray-800 uppercase">Rekapan Penilaian OJT (Baker)</h2><p class="text-xs sm:text-sm text-gray-500">Data rekapitulasi penilaian yang sudah diapprove oleh ETD.</p></div>
+            </div>
+            <div class="flex flex-wrap gap-2 sm:gap-3 w-full md:w-auto">
+                <div class="bg-white p-2 rounded-lg border border-gray-300 flex items-center shadow-sm w-full sm:w-auto flex-1 sm:flex-none">
+                    <i data-lucide="calendar" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 mx-2 shrink-0"></i>
+                    <select id="mo-year-filter-rekap" onchange="window.renderMOTableData()" class="bg-transparent outline-none font-bold text-gray-700 text-sm sm:text-base cursor-pointer w-full"><option value="">Semua Tahun</option></select>
+                </div>
+                <div class="bg-white p-2 rounded-lg border border-gray-300 flex items-center shadow-sm w-full sm:w-auto flex-1 sm:flex-none">
+                    <i data-lucide="filter" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 mx-2 shrink-0"></i>
+                    <select id="mo-batch-filter-rekap" onchange="window.renderMOTableData()" class="bg-transparent outline-none font-bold text-gray-700 text-sm sm:text-base cursor-pointer w-full"><option value="">Semua Batch</option></select>
+                </div>
+                <button onclick="window.printRekapanTable()" class="bg-baker-800 hover:bg-baker-900 text-white p-2 sm:px-4 rounded-lg flex items-center justify-center gap-2 shadow-sm font-bold transition-colors w-full sm:w-auto flex-1 sm:flex-none text-sm sm:text-base shrink-0">
+                    <i data-lucide="printer" class="w-4 h-4 sm:w-5 sm:h-5"></i> <span class="hidden sm:inline">Cetak PDF</span>
+                </button>
+            </div>
+        </div>
+        <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200 w-full pb-4">
+            <table class="w-full text-sm text-left min-w-max border-collapse">
+                <thead class="bg-baker-800 text-white uppercase text-xs font-black tracking-wider">
+                    <tr>
+                        <th class="p-3 border-r border-baker-700 text-center min-w-[50px]">No</th>
+                        <th class="p-3 border-r border-baker-700 min-w-[200px] whitespace-normal">Nama Peserta</th>
+                        <th class="p-3 border-r border-baker-700 min-w-[120px]">ID Pelamar</th>
+                        <th class="p-3 border-r border-baker-700 min-w-[150px] whitespace-normal">Lokasi OJT</th>
+                        <th class="p-3 border-r border-baker-700 min-w-[150px] whitespace-normal">Lokasi Penempatan</th>
+                        <th class="p-3 border-r border-baker-700 text-center min-w-[140px] whitespace-normal">Nilai Praktik Mochido</th>
+                        <th class="p-3 border-r border-baker-700 text-center min-w-[140px] whitespace-normal">Nilai Praktik Yeast</th>
+                        <th class="p-3 border-r border-baker-700 text-center min-w-[120px] whitespace-normal">Nilai Nonteknis</th>
+                        <th class="p-3 border-r border-baker-700 min-w-[200px]">Hal yang dipertahankan</th>
+                        <th class="p-3 border-r border-baker-700 min-w-[200px]">Hal yang ditingkatkan</th>
+                        <th class="p-3 border-r border-baker-700 min-w-[160px]">Rekomendasi Mentor</th>
+                        <th class="p-3 border-r border-baker-700 min-w-[180px]">Keterangan Mentor</th>
+                        <th class="p-3 border-r border-baker-700 text-center min-w-[180px]">Keputusan User</th>
+                        <th class="p-3 text-center min-w-[160px]">Validasi MO</th>
+                    </tr>
+                </thead>
+                <tbody id="mo-rekapan-tbody" class="text-gray-700"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="view-hasil-mentor" class="max-w-[1400px] mx-auto p-4 sm:p-6 mt-4 hidden no-print">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 sm:mb-8 gap-4">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button onclick="window.showView('dashboard')" class="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shrink-0"><i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600"></i></button>
+                <div><h2 class="text-lg sm:text-2xl font-black text-gray-800 uppercase">Hasil Penilaian Mentor</h2><p class="text-xs sm:text-sm text-gray-500">Lihat rincian form penilaian utuh dari masing-masing peserta.</p></div>
+            </div>
+            <div class="flex flex-wrap gap-2 sm:gap-3 w-full md:w-auto">
+                <div class="bg-white p-2 rounded-lg border border-gray-300 flex items-center shadow-sm w-full sm:w-auto flex-1 sm:flex-none">
+                    <i data-lucide="calendar" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 mx-2 shrink-0"></i>
+                    <select id="mo-year-filter-hasil" onchange="window.renderMOCardsData()" class="bg-transparent outline-none font-bold text-gray-700 text-sm sm:text-base cursor-pointer w-full"><option value="">Semua Tahun</option></select>
+                </div>
+                <div class="bg-white p-2 rounded-lg border border-gray-300 flex items-center shadow-sm w-full sm:w-auto flex-1 sm:flex-none">
+                    <i data-lucide="filter" class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 mx-2 shrink-0"></i>
+                    <select id="mo-batch-filter-hasil" onchange="window.renderMOCardsData()" class="bg-transparent outline-none font-bold text-gray-700 text-sm sm:text-base cursor-pointer w-full"><option value="">Semua Batch</option></select>
+                </div>
+            </div>
+        </div>
+        <div id="mo-hasil-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"></div>
+    </div>
+
+    <div id="view-form" class="max-w-[1400px] mx-auto bg-white rounded-xl shadow-xl overflow-hidden mb-8 hidden m-2 sm:m-6 border border-gray-200">
+        <div class="bg-gradient-to-r from-baker-800 to-baker-900 p-4 sm:p-6 text-white text-center border-b-4 border-[#f58a0b] relative overflow-hidden print-border-none no-print-bg">
+            <div class="flex flex-col sm:flex-row items-center justify-between relative z-10 gap-3 sm:gap-4">
+                <button onclick="window.confirmExitForm()" class="px-3 py-2 sm:px-4 sm:py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition-colors no-print w-full sm:w-auto justify-center">
+                    <i data-lucide="home" class="w-4 h-4"></i> Kembali ke Dashboard
+                </button>
+                <div class="flex-1 text-center w-full">
+                    <h1 class="text-lg sm:text-2xl font-black uppercase tracking-wider text-baker-100" style="-webkit-print-color-adjust: exact; color-adjust: exact;">Lembar Penilaian Baker</h1>
+                    <p class="text-[10px] sm:text-sm font-medium opacity-70 tracking-wide text-baker-300">ID: <span id="display-draft-id" class="font-mono text-white">Baru</span></p>
+                </div>
+                <div class="flex flex-wrap justify-center sm:justify-end gap-2 w-full sm:w-auto no-print shrink-0 mt-2 sm:mt-0" id="form-header-right">
+                    <button onclick="window.generateAndPrintPDF()" class="hidden px-4 py-2 sm:px-3 sm:py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-xs sm:text-sm font-bold text-white flex items-center justify-center gap-1.5 transition-colors shadow-lg flex-1 sm:flex-none" id="btn-print-form">
+                        <i data-lucide="printer" class="w-4 h-4 sm:w-4 sm:h-4"></i> PDF
+                    </button>
+                    <button onclick="window.handleETDApprove()" class="hidden px-4 py-2 sm:px-3 sm:py-2 bg-green-600 hover:bg-green-700 rounded-lg text-xs sm:text-sm font-bold text-white flex items-center justify-center gap-1.5 transition-colors shadow-lg flex-1 sm:flex-none" id="btn-etd-approve">
+                        <i data-lucide="check-check" class="w-4 h-4 sm:w-4 sm:h-4"></i> Approve ETD
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-2 relative z-10 mt-4 sm:mt-6 no-print">
+                <button onclick="window.goToStep(1)" id="step-1" class="step-indicator px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-sm shadow-md flex items-center gap-1.5 sm:gap-2 bg-white text-baker-900 transition-all cursor-pointer border border-gray-200"><span class="bg-baker-900 text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">1</span> <span class="hidden sm:inline">Form</span> Skala 1-4</button>
+                <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5 text-baker-500 hidden sm:block mt-1 sm:mt-2"></i>
+                <button onclick="window.goToStep(2)" id="step-2" class="step-indicator px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-sm shadow-md flex items-center gap-1.5 sm:gap-2 bg-baker-700/80 text-white transition-all opacity-70 hover:opacity-100 cursor-pointer"><span class="bg-white/20 text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">2</span> <span class="hidden sm:inline">Form</span> Mochido</button>
+                <i data-lucide="arrow-right" class="w-4 h-4 sm:w-5 sm:h-5 text-baker-500 hidden sm:block mt-1 sm:mt-2"></i>
+                <button onclick="window.goToStep(3)" id="step-3" class="step-indicator px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-sm shadow-md flex items-center gap-1.5 sm:gap-2 bg-baker-700/80 text-white transition-all opacity-70 hover:opacity-100 cursor-pointer"><span class="bg-white/20 text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">3</span> <span class="hidden sm:inline">Form</span> Yeast</button>
+            </div>
+        </div>
+
+        <div class="bg-baker-50 border-b border-baker-200 p-3 sm:p-6 shadow-sm">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="store" class="w-5 h-5 text-baker-800"></i>
+                        <h3 class="text-sm font-black text-baker-900 uppercase tracking-wide">Informasi Utama</h3>
+                    </div>
+                    <button onclick="window.fetchMasterData()" id="btnSyncMaster" type="button" class="w-full sm:w-auto text-xs bg-baker-200 hover:bg-baker-300 text-baker-900 font-bold px-3 py-2 rounded-lg border border-baker-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer no-print readonly-hide">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Muat Ulang Master
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-baker-800 mb-1 uppercase tracking-wider">Tanggal <span class="text-red-500 readonly-hide">*</span></label>
+                        <input type="date" id="global_date" onchange="window.syncGlobalData('date', this.value)" class="form-control w-full p-2.5 sm:p-3 border border-baker-300 rounded-lg focus:ring-2 focus:ring-baker-500 outline-none bg-white text-sm text-gray-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-baker-800 mb-1 uppercase tracking-wider">Batch <span class="text-red-500 readonly-hide">*</span></label>
+                        <select id="global_batch_select" onchange="window.handleBatchSelect(this.value)" class="form-control w-full p-2.5 sm:p-3 border border-baker-300 rounded-lg focus:ring-2 focus:ring-baker-500 outline-none bg-white text-sm text-gray-800 cursor-pointer"><option value="">-- Pilih Batch --</option></select>
+                    </div>
+                    <div class="readonly-hide">
+                        <label class="block text-xs font-bold text-baker-800 mb-1 uppercase tracking-wider">Jml Peserta <span class="text-red-500">*</span></label>
+                        <input type="number" id="global_participantCount" min="1" max="10" value="1" onchange="window.syncGlobalParticipants(this.value)" class="form-control w-full p-2.5 sm:p-3 border border-baker-300 rounded-lg focus:ring-2 focus:ring-baker-500 outline-none bg-white text-sm text-gray-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-baker-800 mb-1 uppercase tracking-wider">Nama Store <span class="text-red-500 readonly-hide">*</span></label>
+                        <input type="text" id="global_flagship" oninput="window.syncGlobalData('flagship', this.value)" class="form-control w-full p-2.5 sm:p-3 border border-baker-300 rounded-lg focus:ring-2 focus:ring-baker-500 outline-none bg-white text-sm text-gray-800" placeholder="Contoh: FX Sudirman">
+                    </div>
+                </div>
+
+                <div class="mb-6 bg-white p-3 sm:p-4 rounded-xl border border-baker-200 readonly-hide shadow-sm">
+                    <label class="block text-xs font-bold text-baker-800 mb-3 uppercase tracking-wider">PILIH PESERTA DARI MASTER DATA <span class="text-red-500">*</span></label>
+                    <div id="global_participant_names_container" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 bg-white p-3 sm:p-4 rounded-xl border border-baker-200 shadow-sm">
+                    <div>
+                        <label class="block text-xs font-bold text-baker-800 mb-2 uppercase tracking-wider">Nama Mentor <span class="text-red-500 readonly-hide">*</span></label>
+                        <input type="text" id="global_mentor" oninput="window.updateMentorName(this.value)" class="form-control w-full p-2.5 sm:p-3 border border-baker-300 rounded-lg focus:ring-2 focus:ring-baker-500 outline-none bg-gray-50 text-sm text-gray-800" placeholder="Masukkan nama Anda">
+                    </div>
+                    <div class="flex flex-col items-start w-full">
+                        <label class="block text-xs font-bold text-baker-800 mb-2 uppercase tracking-wider">Tanda Tangan <span class="text-red-500 readonly-hide">*</span></label>
+                        <div class="flex flex-col border-2 border-dashed border-baker-300 rounded-lg bg-gray-50 overflow-hidden w-full max-w-sm mx-auto md:mx-0">
+                            <canvas id="signatureCanvas_global" width="300" height="150" style="touch-action: none;" class="bg-white touch-none cursor-crosshair w-full"></canvas>
+                            <div class="w-full flex justify-between items-center px-3 py-2 bg-baker-50 border-t border-baker-200 readonly-hide no-print"><span class="text-[10px] sm:text-xs text-baker-700 italic">Gunakan jari untuk ttd</span><button type="button" onclick="window.clearGlobalSignature()" class="text-xs text-red-500 hover:text-red-700 font-bold p-1">Hapus</button></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="mo-stamps-container" class="mt-6 hidden print-only border-t-2 border-dashed border-gray-300 pt-4"></div>
+            </div>
+        </div>
+
+        <div id="tab-content-scale14" class="form-tab-content p-3 sm:p-8 block">
+            <div class="mb-4 sm:mb-6 bg-baker-50 p-3 sm:p-4 rounded-xl border border-baker-200 flex flex-col sm:flex-row sm:items-center justify-between no-print-bg print-border-none shadow-sm gap-2">
+                <div><h2 class="text-base sm:text-lg font-black text-baker-900 uppercase">1: Penilaian Teknis &amp; Nonteknis</h2><p class="text-[10px] sm:text-xs text-baker-700 no-print">Keterampilan kerja dan etika Baker & Crew.</p></div>
+            </div>
+            <div class="overflow-x-auto w-full mb-6 sm:mb-8 border border-gray-300 rounded-xl shadow-sm print-border-none">
+                <table class="w-full text-left border-collapse min-w-[1100px]"><thead id="tableHead_scale14"></thead><tbody id="tableBody_scale14"></tbody></table>
+            </div>
+            <div class="mb-6 sm:mb-8"><h3 class="text-sm font-black text-baker-900 uppercase tracking-wide mb-3 sm:mb-4 flex items-center gap-2"><i data-lucide="message-square-text" class="w-5 h-5 text-baker-700 no-print"></i> Catatan Pengembangan</h3><div id="participantFeedbackContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6"></div></div>
+            <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 border-t pt-4 sm:pt-6 no-print readonly-hide"><button onclick="window.handleSaveDraft()" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 sm:py-3.5 text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 rounded-xl font-bold cursor-pointer text-sm sm:text-base"><i data-lucide="save" class="w-5 h-5"></i> Simpan Draft</button><button onclick="window.goToStep(2)" class="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 sm:py-3.5 text-white bg-baker-800 hover:bg-baker-900 rounded-xl font-bold cursor-pointer shadow-lg transition-transform active:scale-95 text-sm sm:text-base">Lanjut <span class="hidden sm:inline">ke Form Praktik Mochido</span> <i data-lucide="arrow-right-circle" class="w-5 h-5"></i></button></div>
+        </div>
+
+        <div id="tab-content-beverage" class="form-tab-content p-3 sm:p-8 hidden">
+            <div class="mb-4 sm:mb-6 bg-baker-50 p-3 sm:p-4 rounded-xl border border-baker-200 flex flex-col sm:flex-row sm:items-center justify-between no-print-bg print-border-none shadow-sm gap-2"><div><h2 class="text-base sm:text-lg font-black text-baker-900 uppercase">2: Tes Praktik Mochido</h2></div></div>
+            <div class="overflow-x-auto w-full mb-6 sm:mb-8 border border-gray-300 rounded-xl shadow-sm print-border-none">
+                <table class="w-full text-left border-collapse min-w-[700px]"><thead id="tableHead_mochido"></thead><tbody id="tableBody_mochido"></tbody></table>
+            </div>
+            <div class="flex flex-col bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm mb-6 print-border-none">
+                <label class="text-xs sm:text-sm font-bold text-gray-800 mb-2">KOMENTAR PEMEGANG SHIFT (MOCHIDO) <span class="text-red-500 readonly-hide">*</span></label>
+                <textarea id="comments_mochido" oninput="window.globalStore.commentsMochido = this.value" class="form-control w-full min-h-[100px] sm:min-h-[150px] p-3 sm:p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-baker-500 outline-none resize-none bg-white text-sm" placeholder="Tuliskan evaluasi teknis untuk praktik Mochido..."></textarea>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row justify-between gap-3 border-t pt-4 sm:pt-6 no-print readonly-hide"><div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto"><button onclick="window.goToStep(1)" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 sm:py-3.5 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl font-bold text-sm sm:text-base"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button><button onclick="window.handleSaveDraft()" class="hidden sm:flex items-center justify-center gap-2 px-6 py-3 sm:py-3.5 text-blue-700 bg-blue-50 border border-blue-200 hover:bg-blue-100 rounded-xl font-bold text-sm sm:text-base"><i data-lucide="save" class="w-4 h-4"></i> Simpan Draft</button></div><button onclick="window.goToStep(3)" class="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 sm:py-3.5 text-white bg-baker-800 hover:bg-baker-900 rounded-xl font-bold shadow-lg transition-transform active:scale-95 text-sm sm:text-base">Lanjut <span class="hidden sm:inline">ke Form Praktik Yeast</span> <i data-lucide="arrow-right-circle" class="w-5 h-5"></i></button></div>
+        </div>
+
+        <div id="tab-content-sidedish" class="form-tab-content p-3 sm:p-8 hidden">
+            <div class="mb-4 sm:mb-6 bg-baker-50 p-3 sm:p-4 rounded-xl border border-baker-200 flex flex-col sm:flex-row sm:items-center justify-between no-print-bg print-border-none shadow-sm gap-2"><div><h2 class="text-base sm:text-lg font-black text-baker-900 uppercase">3: Tes Praktik Yeast</h2></div></div>
+            <div class="overflow-x-auto w-full mb-6 sm:mb-8 border border-gray-300 rounded-xl shadow-sm print-border-none">
+                <table class="w-full text-left border-collapse min-w-[800px]"><thead id="tableHead_yeast"></thead><tbody id="tableBody_yeast"></tbody></table>
+            </div>
+            <div class="flex flex-col bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm mb-6 print-border-none">
+                <label class="text-xs sm:text-sm font-bold text-gray-800 mb-2">KOMENTAR PEMEGANG SHIFT (YEAST) <span class="text-red-500 readonly-hide">*</span></label>
+                <textarea id="comments_yeast" oninput="window.globalStore.commentsYeast = this.value" class="form-control w-full min-h-[100px] sm:min-h-[150px] p-3 sm:p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-baker-500 outline-none resize-none bg-white text-sm" placeholder="Tuliskan evaluasi teknis untuk praktik Yeast..."></textarea>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between gap-3 border-t pt-4 sm:pt-6 bg-gray-50 -mx-3 sm:-mx-8 -mb-3 sm:-mb-8 p-4 sm:p-8 rounded-b-xl border-t border-gray-200 no-print readonly-hide"><button onclick="window.goToStep(2)" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 sm:py-3.5 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 rounded-xl font-bold text-sm sm:text-base shadow-sm"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button><div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto"><button onclick="window.handleSaveDraft()" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 sm:py-3.5 text-blue-700 bg-blue-100 hover:bg-blue-200 border border-blue-300 rounded-xl font-bold transition-colors text-sm sm:text-base"><i data-lucide="save" class="w-5 h-5"></i> Simpan Draft</button><button id="btnSubmitAll" onclick="window.handleSubmitAll()" class="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-3 sm:py-3.5 text-white bg-green-600 hover:bg-green-700 rounded-xl font-bold shadow-lg transition-transform active:scale-95 text-sm sm:text-base"><i data-lucide="send" class="w-5 h-5"></i> Kirim & Selesai</button></div></div>
+        </div>
+    </div>
+
+    <div id="print-container" class="hidden"></div>
+    <div id="notificationModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden transition-opacity no-print">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl transform scale-100 transition-transform"><div id="modalIconContainer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5"></div><h3 id="modalTitle" class="text-lg sm:text-xl font-black text-gray-800 mb-2"></h3><p id="modalMessage" class="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-xs sm:text-sm"></p><button onclick="window.closeModal()" class="w-full font-bold py-3 px-4 rounded-xl text-white transition-colors shadow-md bg-baker-900 hover:bg-black cursor-pointer text-sm sm:text-base">Tutup / Mengerti</button></div>
+    </div>
+    <div id="customConfirmModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] p-4 hidden no-print">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative text-center">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5"><i data-lucide="help-circle" class="w-8 h-8 sm:w-10 sm:h-10 text-orange-600"></i></div>
+            <h3 id="confirmModalTitle" class="text-lg sm:text-xl font-black text-gray-800 mb-2">Konfirmasi</h3>
+            <p id="confirmModalMessage" class="text-gray-600 mb-6 text-xs sm:text-sm">Apakah Anda yakin?</p>
+            <div class="flex gap-2 sm:gap-3">
+                <button onclick="window.closeConfirmModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button>
+                <button id="confirmModalBtn" class="flex-1 text-white font-bold py-3 px-2 sm:px-4 rounded-xl transition-colors text-xs sm:text-sm bg-baker-600 hover:bg-baker-700">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+    <div id="exitModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl"><div class="w-16 h-16 sm:w-20 sm:h-20 bg-baker-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5"><i data-lucide="alert-triangle" class="w-8 h-8 sm:w-10 sm:h-10 text-baker-700"></i></div><h3 class="text-lg sm:text-xl font-black text-gray-800 mb-2">Kembali ke Dashboard?</h3><p class="text-gray-600 mb-6 sm:mb-8 text-xs sm:text-sm">Pastikan Anda sudah menekan tombol "Simpan Draft" jika ada perubahan yang belum disimpan. Yakin ingin keluar?</p><div class="flex gap-2 sm:gap-3"><button onclick="window.closeExitModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button><button onclick="window.forceExitToDashboard()" class="flex-1 bg-baker-800 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-baker-900 transition-colors text-xs sm:text-sm">Ya, Keluar</button></div></div>
+    </div>
+    <div id="userActionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative"><h3 id="userActionTitle" class="text-lg sm:text-xl font-black text-gray-800 mb-2 text-center">Set Keputusan User</h3><p id="userActionDesc" class="text-gray-600 mb-4 text-xs sm:text-sm text-center">Tindakan ini bersifat final. Silakan berikan alasan.</p><div class="mb-4 sm:mb-6"><label class="block text-[10px] sm:text-xs font-bold text-gray-700 mb-2 uppercase">Alasan Keputusan <span class="text-red-500">*</span></label><textarea id="userActionReason" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-baker-500 resize-none h-20 sm:h-24 text-sm" placeholder="Sebutkan alasannya secara detail..."></textarea></div><div class="flex gap-2 sm:gap-3"><button onclick="window.closeUserModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button><button id="userActionConfirmBtn" class="flex-1 text-white font-bold py-3 px-2 sm:px-4 rounded-xl transition-colors text-xs sm:text-sm">Konfirmasi Final</button></div></div>
+    </div>
+    <div id="moActionModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative"><h3 id="moActionTitle" class="text-lg sm:text-xl font-black text-gray-800 mb-2 text-center">Validasi MO</h3><p id="moActionDesc" class="text-gray-600 mb-6 text-xs sm:text-sm text-center">Apakah Anda yakin akan mengesahkan hasil ini secara final?</p><div class="flex gap-2 sm:gap-3"><button onclick="window.closeMOModal()" class="flex-1 bg-gray-100 text-gray-800 font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-gray-200 transition-colors text-xs sm:text-sm">Batal</button><button id="moActionConfirmBtn" class="flex-1 text-white font-bold py-3 px-2 sm:px-4 rounded-xl transition-colors text-xs sm:text-sm">Konfirmasi Final</button></div></div>
+    </div>
+    <div id="etdNotifModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden no-print transition-opacity">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative"><div class="flex justify-between items-center mb-6 border-b pb-3"><h3 class="text-lg sm:text-xl font-black text-gray-800 uppercase flex items-center gap-2"><i data-lucide="bell" class="w-5 h-5 text-baker-700"></i> Pemberitahuan</h3><button onclick="document.getElementById('etdNotifModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-800 p-1 bg-gray-100 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button></div><div id="etdNotifContent" class="space-y-3"></div></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import { getAuth, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const SPREADSHEET_ID = '12no865-_dZIMWoJGS1LQjtzCxyh7YJEtnK7hqP1coaY';
+        const OJT_GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxyncb1CWaSax9KWh_eVdIQ8CuStUom66i--LZ1kthaGJp7i_OUL16gSjNV7cE_Q83P/exec';
+        
+        let db, auth, analytics;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mister-donut-baker-ojt'; 
+        let currentUser = null;
+        let isMasterLoaded = false;
+        
+        window.userRole = null;
+        window.etdUnsubscribe = null;
+        window.currentDraftId = null; 
+        window.viewMode = 'DRAFT';
+        window.allMasterParticipants = []; 
+        window.availableBatches = []; 
+        window.allSubmittedForms = []; 
+        window.moParticipantRecords = [];
+        window.globalStore = { flagship: '', batch: '', date: '', participantCount: 1, mentorName: '', selectedParticipants: [null], signatureDataUrl: null, commentsMochido: '', commentsYeast: '' };
+        window.participants_scale14 = [{ scores: {}, status: 'Diluluskan', rejectionReason: '', improvements: '', strengths: '' }];
+        window.scores_mochido = {}; 
+        window.scores_yeast = {}; 
+        window.moApprovals = []; 
+        window.userApprovals = [];
+
+        window.showModal = function(type, title, message) {
+            const modal = document.getElementById('notificationModal'); const icon = document.getElementById('modalIconContainer'); document.getElementById('modalTitle').innerText = title; document.getElementById('modalMessage').innerText = message;
+            if (type === 'success') { icon.className = 'w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5 text-green-600'; icon.innerHTML = `<i data-lucide="check-circle" class="w-8 h-8 sm:w-10 sm:h-10"></i>`; }
+            else if (type === 'loading') { icon.className = 'w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5 text-blue-600'; icon.innerHTML = `<i data-lucide="loader-2" class="w-8 h-8 sm:w-10 sm:h-10 animate-spin"></i>`; }
+            else { icon.className = 'w-16 h-16 sm:w-20 sm:h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-5 text-red-600'; icon.innerHTML = `<i data-lucide="alert-circle" class="w-8 h-8 sm:w-10 sm:h-10"></i>`; }
+            modal.classList.remove('hidden'); if(window.lucide) window.lucide.createIcons();
+        };
+        window.closeModal = function() { document.getElementById('notificationModal').classList.add('hidden'); };
+        
+        window.showConfirm = function(title, message, onConfirm) {
+            document.getElementById('confirmModalTitle').innerText = title;
+            document.getElementById('confirmModalMessage').innerText = message;
+            const btn = document.getElementById('confirmModalBtn');
+            btn.onclick = () => { window.closeConfirmModal(); onConfirm(); };
+            document.getElementById('customConfirmModal').classList.remove('hidden');
+            if(window.lucide) window.lucide.createIcons();
+        };
+        window.closeConfirmModal = function() { document.getElementById('customConfirmModal').classList.add('hidden'); };
+
+        window.confirmExitForm = function() { document.getElementById('exitModal').classList.remove('hidden'); if(window.lucide) window.lucide.createIcons(); };
+        window.closeExitModal = function() { document.getElementById('exitModal').classList.add('hidden'); };
+        window.forceExitToDashboard = function() { window.closeExitModal(); window.showView('dashboard'); };
+
+        window.togglePasswordVisibility = function() {
+            const input = document.getElementById('input-keypass'); const icon = document.getElementById('eye-icon');
+            if (input.type === 'password') { input.type = 'text'; icon.setAttribute('data-lucide', 'eye-off'); } 
+            else { input.type = 'password'; icon.setAttribute('data-lucide', 'eye'); }
+            if(window.lucide) window.lucide.createIcons();
+        };
+
+        function initializeFirebaseAndAuth() {
+            try {
+                const userFirebaseConfig = {
+                    apiKey: "AIzaSyAAJCG5uC9-j1kVY4Jsa8UqwBZy-4hJBLg",
+                    authDomain: "seleksi-teknis-baker-misdo.firebaseapp.com",
+                    projectId: "seleksi-teknis-baker-misdo",
+                    storageBucket: "seleksi-teknis-baker-misdo.firebasestorage.app",
+                    messagingSenderId: "807299527840",
+                    appId: "1:807299527840:web:e7c2c87e07b03ff39c45c5",
+                    measurementId: "G-L8KM91RL2N"
+                };
+                const isSandbox = typeof __firebase_config !== 'undefined' && __firebase_config;
+                const firebaseConfig = isSandbox ? JSON.parse(__firebase_config) : userFirebaseConfig;
+                const app = initializeApp(firebaseConfig);
+                
+                if (!isSandbox && firebaseConfig.appId === userFirebaseConfig.appId) {
+                    try { analytics = getAnalytics(app); } catch (e) { console.warn("Analytics skipped:", e); }
+                }
+
+                auth = getAuth(app); db = getFirestore(app);
+                initAuthFlow();
+            } catch(e) {
+                const badge = document.getElementById('auth-status-badge');
+                if (badge) badge.innerHTML = `<i data-lucide="wifi-off" class="w-3 h-3 sm:w-4 sm:h-4"></i> Offline`;
+                setTimeout(() => { if(window.showView) window.showView('login'); }, 500);
+            }
+        }
+
+        async function initAuthFlow() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
+                else await signInAnonymously(auth);
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUser = user;
+                        const badge = document.getElementById('auth-status-badge');
+                        if (badge) badge.innerHTML = `<i data-lucide="user-check" class="w-3 h-3 sm:w-4 sm:h-4 text-green-600"></i> UID: ${user.uid.substring(0,6)}`;
+                        if(window.lucide) window.lucide.createIcons();
+                        if(!isMasterLoaded) { await window.fetchMasterData(); isMasterLoaded = true; }
+                        if(!window.userRole) window.showView('login'); else window.showView('dashboard');
+                    }
+                });
+            } catch(error) {
+                const loadView = document.getElementById('view-loading');
+                if(loadView) loadView.innerHTML = `<div class="text-red-500 font-bold p-4">Gagal terhubung. Muat ulang halaman.</div>`;
+            }
+        }
+
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initializeFirebaseAndAuth); } 
+        else { initializeFirebaseAndAuth(); }
+
+        window.handleLogin = function() {
+            const input = document.getElementById('input-keypass').value.trim().toLowerCase();
+            if(input === 'misdo') window.userRole = 'MENTOR';
+            else if(input === 'usachi') window.userRole = 'MO';
+            else if(input === 'mochido') window.userRole = 'USER';
+            else if(input === 'kitakeren') window.userRole = 'ETD';
+            else { window.showModal('error', 'Akses Ditolak', 'Keypass yang Anda masukkan salah.'); return; }
+            
+            document.getElementById('dash-role-text').innerText = window.userRole;
+            const badge = document.getElementById('role-badge'); badge.innerText = window.userRole; badge.classList.remove('hidden');
+
+            document.getElementById('card-buat').style.display = (window.userRole === 'MENTOR' || window.userRole === 'ETD') ? 'block' : 'none';
+            document.getElementById('card-draft').style.display = (window.userRole === 'MENTOR' || window.userRole === 'ETD') ? 'block' : 'none';
+            document.getElementById('card-rekapan').style.display = (window.userRole === 'MO' || window.userRole === 'ETD' || window.userRole === 'USER') ? 'block' : 'none';
+            document.getElementById('card-hasil-mentor').style.display = (window.userRole === 'MO' || window.userRole === 'ETD' || window.userRole === 'USER') ? 'block' : 'none';
+            document.getElementById('card-trash').style.display = (window.userRole === 'ETD') ? 'block' : 'none';
+
+            const cardHistory = document.getElementById('card-history');
+            const historyTitle = document.getElementById('history-card-title');
+            const historyDesc = document.getElementById('history-card-desc');
+            const historyViewTitle = document.getElementById('history-view-title');
+            const historyViewDesc = document.getElementById('history-view-desc');
+
+            if(window.userRole === 'ETD') {
+                cardHistory.style.display = 'block'; historyTitle.innerText = "Antrean Approve ETD"; historyDesc.innerText = "Setujui penilaian dari mentor sebelum masuk ke rekapitulasi MO."; historyViewTitle.innerText = "Antrean Penilaian (Menunggu Approve ETD)"; historyViewDesc.innerText = "Pilih form untuk memeriksa dan melakukan Approve atau Hapus form.";
+                document.getElementById('etd-notification-bell').classList.remove('hidden');
+                try {
+                    if(window.etdUnsubscribe) window.etdUnsubscribe();
+                    window.etdUnsubscribe = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'submitted_forms'), (snapshot) => {
+                        let pendingApprove = 0; let pendingUpdates = 0;
+                        snapshot.forEach(doc => { 
+                            let d = doc.data(); if(d.isDeleted) return;
+                            if(d.isApprovedByETD === false) pendingApprove++; 
+                            if(d.hasUnreadUpdate === true) pendingUpdates++;
+                        });
+                        window.etdNotifData = { pendingApprove, pendingUpdates };
+                        if(pendingApprove > 0 || pendingUpdates > 0) document.getElementById('etd-notification-dot').classList.remove('hidden'); else document.getElementById('etd-notification-dot').classList.add('hidden');
+                    });
+                } catch(e) {}
+            } else if(window.userRole === 'MENTOR') {
+                cardHistory.style.display = 'block'; historyTitle.innerText = "Riwayat Terkirim & Cetak"; historyDesc.innerText = "Lihat daftar penilaian yang sudah final (Terkirim) dan Download PDF."; historyViewTitle.innerText = "Riwayat Penilaian Terkirim"; historyViewDesc.innerText = "Daftar form final. Anda dapat melakukan pratinjau dan mencetak (PDF).";
+                document.getElementById('etd-notification-bell').classList.add('hidden');
+                if(window.etdUnsubscribe) { window.etdUnsubscribe(); window.etdUnsubscribe = null; }
+            } else {
+                cardHistory.style.display = 'none'; document.getElementById('etd-notification-bell').classList.add('hidden');
+                if(window.etdUnsubscribe) { window.etdUnsubscribe(); window.etdUnsubscribe = null; }
+            }
+            window.showView('dashboard');
+        }
+
+        window.showView = function(view) {
+            ['loading','login','dashboard','drafts','history','rekapan','hasil-mentor','form','trash'].forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+            document.getElementById(`view-${view}`).classList.remove('hidden'); window.scrollTo(0,0);
+            if (view === 'drafts') window.loadDraftsList();
+            if (view === 'history') window.loadHistoryList();
+            if (view === 'rekapan') window.loadMOView('rekapan');
+            if (view === 'hasil-mentor') window.loadMOView('hasil-mentor');
+            if (view === 'trash') window.loadTrashList();
+            if(window.lucide) window.lucide.createIcons();
+        }
+
+        window.fetchMasterData = async function() {
+            const btn = document.getElementById('btnSyncMaster');
+            if(btn) { btn.innerHTML = `<i data-lucide="refresh-cw" class="w-3.5 h-3.5 animate-spin"></i> Memuat...`; if(window.lucide) window.lucide.createIcons(); }
+            try {
+                const gvizUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=NAME`;
+                const res = await fetch(gvizUrl); 
+                const text = await res.text(); 
+                const json = JSON.parse(text.substring(47, text.length - 2));
+                
+                const rows = json.table.rows || [];
+                
+                // Mulai dari baris ke-2 (index 1) karena baris 1 (index 0) adalah header
+                const rawData = rows.length > 1 ? rows.slice(1) : rows;
+                
+                window.allMasterParticipants = rawData.map((r, idx) => {
+                    const c = r.c || []; let tanggalBatch = null;
+                    if (c[9]) {
+                        if (c[9].v && typeof c[9].v === 'string' && c[9].v.startsWith('Date(')) {
+                            const match = c[9].v.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
+                            if (match) tanggalBatch = new Date(parseInt(match[1]), parseInt(match[2]), parseInt(match[3]));
+                        } else if (c[9].f) tanggalBatch = new Date(c[9].f); else if (c[9].v) tanggalBatch = new Date(c[9].v);
+                    }
+                    return {
+                        no: idx + 1, 
+                        idPelamar: c[1] ? String(c[1].v) : '', 
+                        namaPeserta: c[2] ? String(c[2].v) : '', // Kunci kolom "C" -> index 2
+                        batch: c[3] ? String(c[3].v) : '', 
+                        bagian: '-', 
+                        penempatan: c[4] ? String(c[4].v) : '', 
+                        tanggalBatch: tanggalBatch
+                    };
+                }).filter(p => p.namaPeserta && p.namaPeserta.trim() !== '');
+                
+                window.updateAvailableBatchesByDate();
+                if(btn) btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-green-600"></i> Terhubung`;
+            } catch (err) {
+                if(btn) btn.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5 text-red-600"></i> Gagal Memuat`;
+                window.showModal('error', 'Gagal Memuat Master Data', 'Pastikan koneksi internet stabil dan Spreadsheet diatur terbuka (Anyone with link).');
+            }
+            if(btn && window.lucide) window.lucide.createIcons();
+        }
+
+        window.updateAvailableBatchesByDate = function() {
+            if (!window.allMasterParticipants || window.allMasterParticipants.length === 0) {
+                window.availableBatches = []; window.populateBatchSelect(); window.renderGlobalParticipantInputs(); return;
+            }
+            let refDate = window.globalStore.date ? new Date(window.globalStore.date) : new Date();
+            if (isNaN(refDate.getTime())) refDate = new Date();
+            
+            const pastLimit = new Date(refDate); pastLimit.setDate(pastLimit.getDate() - 60);
+            const futureLimit = new Date(refDate); futureLimit.setDate(futureLimit.getDate() + 30);
+            
+            const activeBatches = new Set();
+            window.allMasterParticipants.forEach(p => {
+                p.isActive = false;
+                if (p.tanggalBatch && !isNaN(p.tanggalBatch.getTime())) {
+                    const bDate = p.tanggalBatch;
+                    if (bDate >= pastLimit && bDate <= futureLimit) p.isActive = true;
+                }
+                if (p.batch && p.isActive) activeBatches.add(p.batch);
+            });
+            if (activeBatches.size > 0) window.availableBatches = Array.from(activeBatches);
+            else { window.availableBatches = Array.from(new Set(window.allMasterParticipants.map(p => p.batch).filter(Boolean))); window.allMasterParticipants.forEach(p => p.isActive = true); }
+            window.populateBatchSelect(); window.renderGlobalParticipantInputs();
+        }
+
+        window.createNewAssessment = function() {
+            window.currentDraftId = 'DRAFT-' + Math.random().toString(36).substring(2, 9).toUpperCase(); window.viewMode = 'DRAFT';
+            window.globalStore = { flagship: '', batch: '', date: new Date().toISOString().split('T')[0], participantCount: 1, mentorName: '', selectedParticipants: [null], signatureDataUrl: null, commentsMochido: '', commentsYeast: '' };
+            window.participants_scale14 = [{ scores: {}, status: 'Diluluskan', rejectionReason: '', improvements: '', strengths: '' }];
+            window.scores_mochido = {}; window.scores_yeast = {}; window.moApprovals = []; window.userApprovals = [];
+            window.toggleFormReadonly(false); window.applyStateToDOM(); document.getElementById('display-draft-id').innerText = window.currentDraftId;
+            window.showView('form'); window.goToStep(1);
+        }
+
+        window.handleSaveDraft = async function() {
+            if (!currentUser) return window.showModal('error', 'Akses Ditolak', 'Harus login.');
+            try {
+                window.showModal('loading', 'Menyimpan...', 'Mohon tunggu sebentar.');
+                const payload = { updatedAt: Date.now(), status: 'draft', mentorName: window.globalStore.mentorName || 'Tanpa Nama', flagship: window.globalStore.flagship || 'Toko Belum Diisi', globalStore: window.globalStore, participants_scale14: window.participants_scale14, scores_mochido: window.scores_mochido, scores_yeast: window.scores_yeast };
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'drafts', window.currentDraftId), payload);
+                window.showModal('success', 'Tersimpan!', `Draft berhasil disimpan.`);
+            } catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan menyimpan draft.'); }
+        }
+
+        window.loadDraftsList = async function() {
+            if (!currentUser) return;
+            const container = document.getElementById('draft-list-container'); container.innerHTML = `<div class="col-span-full p-8 text-center text-gray-500"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2"></i> Memuat daftar...</div>`;
+            try {
+                const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'drafts'));
+                let drafts = []; snapshot.forEach(doc => drafts.push({ id: doc.id, ...doc.data() })); drafts.sort((a, b) => b.updatedAt - a.updatedAt);
+                if(drafts.length === 0) { container.innerHTML = `<div class="col-span-full bg-white p-8 text-center rounded-xl border border-dashed border-gray-300">Belum ada draft.</div>`; return; }
+                let html = '';
+                drafts.forEach(d => {
+                    const timeStr = new Date(d.updatedAt).toLocaleString('id-ID');
+                    html += `<div class="bg-white p-5 rounded-xl border border-baker-200 shadow-sm relative group"><div class="flex justify-between items-start mb-3"><span class="bg-baker-100 text-baker-800 text-xs font-black px-2 py-1 rounded">${d.id}</span><button onclick="window.deleteDraft('${d.id}')" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 p-2"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div><h4 class="font-bold text-gray-800 text-lg mb-1">${d.flagship}</h4><p class="text-sm text-gray-600 mb-4"><i data-lucide="user" class="w-3.5 h-3.5 inline mr-1"></i> ${d.mentorName}</p><div class="flex justify-between items-center border-t border-gray-100 pt-4"><span class="text-[10px] text-gray-400 font-medium">${timeStr}</span><button onclick="window.openDraft('${d.id}')" class="text-sm bg-baker-900 text-white px-4 py-2 rounded-lg font-bold">Lanjutkan</button></div></div>`;
+                });
+                container.innerHTML = html; if(window.lucide) window.lucide.createIcons();
+            } catch(e) { container.innerHTML = `<div class="col-span-full text-red-500 font-bold">Gagal memuat.</div>`; }
+        }
+
+        window.openDraft = async function(draftId) {
+            if (!currentUser) return;
+            try {
+                window.showModal('loading', 'Membuka Draft...', '');
+                const docSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'drafts', draftId));
+                if (docSnap.exists()) {
+                    const data = docSnap.data(); window.currentDraftId = draftId; window.viewMode = 'DRAFT'; window.globalStore = data.globalStore || window.globalStore; window.participants_scale14 = data.participants_scale14 || window.participants_scale14; window.scores_mochido = data.scores_mochido || {}; window.scores_yeast = data.scores_yeast || {}; window.moApprovals = []; window.userApprovals = [];
+                    window.toggleFormReadonly(false); window.applyStateToDOM(); document.getElementById('display-draft-id').innerText = draftId; window.closeModal(); window.showView('form'); window.goToStep(1);
+                } else { window.showModal('error', 'Tidak Ditemukan', ''); }
+            } catch (e) { window.showModal('error', 'Gagal', ''); }
+        }
+
+        window.deleteDraft = function(draftId) { window.showConfirm("Hapus Draft", `Hapus draft ${draftId}?`, async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'drafts', draftId)); window.loadDraftsList(); }); }
+
+        window.deleteSubmittedForm = function(formId, source = 'history') {
+            const msg = window.userRole === 'ETD' ? "Yakin ingin menghapus form penilaian ini? Data akan dipindah ke Tempat Sampah selama 30 hari." : "Yakin ingin menghapus form penilaian ini secara permanen?";
+            window.showConfirm("Hapus Form Penilaian", msg, async () => {
+                try {
+                    window.showModal('loading', 'Menghapus...', 'Mohon tunggu.');
+                    if (window.userRole === 'ETD') { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId), { isDeleted: true, deletedAt: Date.now() }); } 
+                    else { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId)); }
+                    window.closeModal(); if (source === 'mo') { const isRekap = !document.getElementById('view-rekapan').classList.contains('hidden'); window.loadMOView(isRekap ? 'rekapan' : 'hasil-mentor'); } else window.loadHistoryList();
+                } catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan saat menghapus form.'); }
+            });
+        }
+
+        window.deletePermanently = function(formId) { window.showConfirm("Hapus Permanen", "Yakin ingin menghapus data ini secara PERMANEN? Aksi ini tidak dapat dibatalkan.", async () => { try { window.showModal('loading', 'Menghapus Permanen...', ''); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId)); window.closeModal(); window.loadTrashList(); } catch(e) { window.showModal('error', 'Gagal', ''); } }); }
+        window.restoreForm = function(formId) { window.showConfirm("Pulihkan Form", "Apakah Anda ingin memulihkan (Restore) data penilaian ini? Data akan kembali ke daftar riwayat.", async () => { try { window.showModal('loading', 'Memulihkan...', ''); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId), { isDeleted: false }); window.closeModal(); window.loadTrashList(); } catch(e) { window.showModal('error', 'Gagal', ''); } }); }
+
+        window.loadTrashList = async function() {
+            const container = document.getElementById('trash-list-container'); container.innerHTML = `<div class="col-span-full p-8 text-center text-gray-500"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2"></i> Memuat Data...</div>`;
+            try {
+                const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'submitted_forms')); let forms = []; const now = Date.now(); const thirtyDays = 30 * 24 * 60 * 60 * 1000;
+                snapshot.forEach(docSnap => { let d = docSnap.data(); if(d.isDeleted) { if (now - d.deletedAt > thirtyDays) deleteDoc(docSnap.ref); else forms.push({ id: docSnap.id, ...d }); } });
+                forms.sort((a, b) => b.deletedAt - a.deletedAt); if(forms.length === 0) { container.innerHTML = `<div class="col-span-full bg-white p-8 text-center rounded-xl border border-dashed border-gray-300">Tempat sampah kosong.</div>`; return; }
+                let html = '';
+                forms.forEach(f => {
+                    const daysLeft = Math.ceil((thirtyDays - (now - f.deletedAt)) / (1000 * 60 * 60 * 24)); const delDate = new Date(f.deletedAt).toLocaleDateString('id-ID');
+                    html += `<div class="bg-white p-4 sm:p-5 rounded-xl border border-red-200 shadow-sm flex flex-col bg-red-50/30"><div class="flex justify-between items-start mb-3"><span class="bg-gray-200 text-gray-800 text-xs font-black px-2 py-1 rounded">${f.id}</span><span class="bg-red-100 text-red-700 font-bold px-2 py-1 rounded text-[10px] sm:text-xs border border-red-200 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${daysLeft} hari lagi</span></div><h4 class="font-bold text-gray-800 text-base sm:text-lg mb-1">${f.globalStore.flagship}</h4><p class="text-xs sm:text-sm text-gray-600 mb-2">Batch: <span class="font-bold">${f.globalStore.batch}</span></p><p class="text-[10px] text-gray-500 italic mb-4">Dihapus pada: ${delDate}</p><div class="flex gap-2 justify-end w-full mt-auto pt-4 border-t border-red-100"><button onclick="window.deletePermanently('${f.id}')" class="flex-1 text-xs sm:text-sm bg-red-600 text-white px-3 py-2.5 rounded-lg font-bold hover:bg-red-700 transition-colors shadow-sm">Hapus Permanen</button><button onclick="window.restoreForm('${f.id}')" class="flex-1 text-xs sm:text-sm bg-white text-green-700 border-2 border-green-600 px-3 py-2.5 rounded-lg font-bold hover:bg-green-50 transition-colors shadow-sm flex items-center justify-center gap-1"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> Pulihkan</button></div></div>`;
+                });
+                container.innerHTML = html; if(window.lucide) window.lucide.createIcons();
+            } catch(e) { container.innerHTML = `<div class="col-span-full text-red-500 font-bold">Gagal memuat.</div>`; }
+        }
+
+        window.fetchAllSubmittedForms = async function() {
+            if (!currentUser) return []; const path = collection(db, 'artifacts', appId, 'public', 'data', 'submitted_forms');
+            const snapshot = await getDocs(path); let forms = []; snapshot.forEach(doc => { let d = doc.data(); if (!d.isDeleted) forms.push({ id: doc.id, ...d }); });
+            forms.sort((a, b) => b.createdAt - a.createdAt); window.allSubmittedForms = forms; return forms;
+        }
+
+        window.loadHistoryList = async function() {
+            const container = document.getElementById('history-list-container'); container.innerHTML = `<div class="col-span-full p-8 text-center text-gray-500"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2"></i> Memuat Data...</div>`;
+            try {
+                let forms = await window.fetchAllSubmittedForms(); if (window.userRole === 'ETD') forms = forms.filter(f => !f.isApprovedByETD);
+                if(forms.length === 0) { const msg = window.userRole === 'ETD' ? 'Tidak ada antrean penilaian yang menunggu approve.' : 'Belum ada riwayat terkirim.'; container.innerHTML = `<div class="col-span-full bg-white p-8 text-center rounded-xl border border-dashed border-gray-300">${msg}</div>`; return; }
+                let html = '';
+                forms.forEach(f => {
+                    const timeStr = new Date(f.createdAt).toLocaleString('id-ID'); let statusBadge = f.isApprovedByETD ? `<span class="bg-green-100 text-green-700 text-[10px] sm:text-xs font-bold px-2 py-1 rounded flex items-center gap-1 shrink-0"><i data-lucide="check" class="w-3 h-3"></i> Approved ETD</span>` : `<span class="bg-amber-100 text-amber-700 text-[10px] sm:text-xs font-bold px-2 py-1 rounded flex items-center gap-1 shrink-0"><i data-lucide="clock" class="w-3 h-3"></i> Menunggu Approve</span>`;
+                    let deleteBtn = window.userRole === 'ETD' ? `<button onclick="window.deleteSubmittedForm('${f.id}', 'history')" class="text-sm bg-red-50 text-red-700 border border-red-200 px-3 py-2 rounded-lg font-bold hover:bg-red-100 transition-colors flex items-center gap-1"><i data-lucide="trash-2" class="w-4 h-4"></i> Hapus</button>` : '';
+                    html += `<div class="bg-white p-4 sm:p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col"><div class="flex flex-wrap sm:flex-nowrap justify-between items-start gap-2 mb-3"><span class="bg-gray-100 text-gray-800 text-xs font-black px-2 py-1 rounded">${f.id}</span>${statusBadge}</div><h4 class="font-bold text-gray-800 text-base sm:text-lg mb-1">${f.globalStore.flagship}</h4><p class="text-xs sm:text-sm text-gray-600 mb-2">Batch: <span class="font-bold">${f.globalStore.batch}</span></p><p class="text-xs text-gray-500 mb-4">Mentor: ${f.mentorName}</p><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-gray-100 pt-4 mt-auto"><span class="text-[10px] text-gray-400 font-medium">${timeStr}</span><div class="flex gap-2 justify-end w-full sm:w-auto">${deleteBtn}<button onclick="window.openSubmittedForm('${f.id}')" class="flex-1 sm:flex-none text-xs sm:text-sm bg-baker-50 text-baker-800 border border-baker-200 px-4 py-2 rounded-lg font-bold hover:bg-baker-100 transition-colors whitespace-nowrap text-center">Detail</button></div></div></div>`;
+                });
+                container.innerHTML = html; if(window.lucide) window.lucide.createIcons();
+            } catch(e) { container.innerHTML = `<div class="col-span-full text-red-500 font-bold">Gagal memuat.</div>`; }
+        }
+
+        window.openSubmittedForm = function(formId) {
+            const form = window.allSubmittedForms.find(f => f.id === formId); if(!form) return;
+            window.currentDraftId = formId; window.viewMode = 'READONLY'; window.globalStore = form.globalStore; window.participants_scale14 = form.participants_scale14; window.scores_mochido = form.scores_mochido || {}; window.scores_yeast = form.scores_yeast || {}; window.moApprovals = form.moApprovals || []; window.userApprovals = form.userApprovals || []; window.isApprovedByETD = form.isApprovedByETD || false;
+            window.toggleFormReadonly(true); window.applyStateToDOM(); document.getElementById('display-draft-id').innerText = formId + (form.isApprovedByETD ? " (APPROVED)" : " (PENDING)"); window.showView('form'); window.goToStep(1);
+        }
+
+        window.handleETDApprove = async function() {
+            if (window.userRole !== 'ETD') return; 
+            window.showConfirm("Setujui Form?", "Setujui (Approve) penilaian ini agar data masuk ke rekapitulasi Manager Operasional?", async () => {
+                const btnApprove = document.getElementById('btn-etd-approve'); btnApprove.disabled = true; btnApprove.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Memproses...`;
+                try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', window.currentDraftId), { isApprovedByETD: true }); window.showModal('success', 'Berhasil Diapprove!', 'Form penilaian telah disetujui dan kini siap direkap oleh Manager Operasional.'); setTimeout(() => { window.showView('history'); }, 2000); } 
+                catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan saat melakukan approval.'); btnApprove.disabled = false; btnApprove.innerHTML = `<i data-lucide="check-check" class="w-4 h-4"></i> Approve ETD`; }
+            });
+        }
+
+        window.handleSubmitAll = async function() {
+            if (!window.globalStore.flagship.trim() || !window.globalStore.batch || !window.globalStore.date || !window.globalStore.mentorName.trim() || !window.globalStore.signatureDataUrl) {
+                return window.showModal('error', 'Data Belum Lengkap', 'Pastikan Informasi Utama dan Tanda Tangan Mentor terisi.');
+            }
+            if (!window.globalStore.commentsMochido || !window.globalStore.commentsMochido.trim()) {
+                return window.showModal('error', 'Data Belum Lengkap', 'Komentar Pemegang Shift (Mochido) wajib diisi.');
+            }
+            if (!window.globalStore.commentsYeast || !window.globalStore.commentsYeast.trim()) {
+                return window.showModal('error', 'Data Belum Lengkap', 'Komentar Pemegang Shift (Yeast) wajib diisi.');
+            }
+
+            const btnSubmit = document.getElementById('btnSubmitAll'); btnSubmit.disabled = true; btnSubmit.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Mengirim...`;
+            try {
+                for (let i = 0; i < window.globalStore.participantCount; i++) {
+                    const master = window.globalStore.selectedParticipants[i]; if(!master) throw new Error(`Peserta ${i+1} belum dipilih.`);
+		            let pScale = window.participants_scale14[i];
+                    if (!pScale) throw new Error(`Data form untuk Peserta ${i+1} tidak valid.`);
+                    if (Object.keys(pScale.scores).length < 15) throw new Error(`Penilaian skala 1-4 (Teknis & Non-Teknis) untuk Peserta ${i+1} belum lengkap diisi.`);
+                    if (!pScale.improvements || !pScale.improvements.trim()) throw new Error(`Hal yang perlu ditingkatkan untuk Peserta ${i+1} wajib diisi.`);
+                    if (!pScale.strengths || !pScale.strengths.trim()) throw new Error(`Hal yang perlu dipertahankan untuk Peserta ${i+1} wajib diisi.`);
+                    if (pScale.status === 'Tidak Diluluskan' && (!pScale.rejectionReason || !pScale.rejectionReason.trim())) throw new Error(`Alasan tidak diluluskan untuk Peserta ${i+1} wajib diisi karena status Tidak Diluluskan.`);
+
+                    // Validasi Wajib Isi Form Mochido & Yeast
+                    for (let task of mochidoTasks) {
+                        if (!window.scores_mochido[i] || window.scores_mochido[i][task.id] === undefined || window.scores_mochido[i][task.id].nilai === '') {
+                            throw new Error(`Penilaian Tes Praktik Mochido untuk Peserta ${i+1} belum lengkap pada soal no ${task.no}.`);
+                        }
+                    }
+                    for (let task of yeastTasks) {
+                        if (!window.scores_yeast[i] || window.scores_yeast[i][task.id] === undefined || window.scores_yeast[i][task.id].nilai === '') {
+                            throw new Error(`Penilaian Tes Praktik Yeast untuk Peserta ${i+1} belum lengkap pada soal no ${task.no}.`);
+                        }
+                    }
+
+                    let avg14 = 0, avgMoc = 0, avgYst = 0;
+                    if (window.participants_scale14[i] && window.participants_scale14[i].scores) { let tot = 0; for (let k in window.participants_scale14[i].scores) { let v = parseFloat(window.participants_scale14[i].scores[k]); if (!isNaN(v)) tot += v; } avg14 = (tot / 6).toFixed(2); }
+                    if (window.scores_mochido[i]) { let tot = 0; for (let d in window.scores_mochido[i]) { let v = parseFloat(window.scores_mochido[i][d].nilai); if (!isNaN(v)) { tot += v; } } avgMoc = (tot / 4).toFixed(2); }
+                    if (window.scores_yeast[i]) { let tot = 0; for (let d in window.scores_yeast[i]) { let v = parseFloat(window.scores_yeast[i][d].nilai); if (!isNaN(v)) { tot += v; } } avgYst = (tot / 4).toFixed(2); }
+                    
+                    const payload = { Tanggal_Penilaian: window.globalStore.date, Batch: window.globalStore.batch, Nama_Mentor: window.globalStore.mentorName, No: master.no || '-', ID_Pelamar: master.idPelamar, Nama_Peserta: master.namaPeserta, Bagian: master.bagian || '-', Lokasi_OJT_Mentoring: window.globalStore.flagship, Lokasi_Penempatan: master.penempatan || '-', Tes_Teori: master.tesTeori || '-', Rata_Mochido: avgMoc, Rata_Yeast: avgYst, Rata_Teknis: avg14, Hal_yang_Perlu_Ditingkatkan: window.participants_scale14[i].improvements, Hal_yang_Perlu_Dipertahankan: window.participants_scale14[i].strengths, Status_Rekomendasi: window.participants_scale14[i].status || 'Diluluskan', Alasan_Tidak_Diluluskan: window.participants_scale14[i].rejectionReason || '-', Tanda_Tangan_Mentor: window.globalStore.signatureDataUrl };
+                    const response = await fetch(OJT_GAS_WEB_APP_URL, { method: 'POST', mode: 'cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+                    const result = await response.json(); if (result.status !== 'success') throw new Error('Gagal dari server Sheet');
+                }
+                const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', window.currentDraftId);
+                const publicPayload = { createdAt: Date.now(), mentorUid: currentUser.uid, mentorName: window.globalStore.mentorName, batch: window.globalStore.batch, flagship: window.globalStore.flagship, globalStore: window.globalStore, participants_scale14: window.participants_scale14, scores_mochido: window.scores_mochido, scores_yeast: window.scores_yeast, isApprovedByETD: false, userApprovals: Array(window.globalStore.participantCount).fill({status: 'PENDING', reason: ''}), moApprovals: Array(window.globalStore.participantCount).fill({status: 'PENDING', reason: ''}) };
+                await setDoc(publicDocRef, publicPayload);
+                if (currentUser) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'drafts', window.currentDraftId)); }
+                window.showModal('success', 'Berhasil Dikirim!', 'Data penilaian berhasil dikirim dan masuk ke antrean persetujuan ETD.'); setTimeout(() => { window.showView('dashboard'); }, 2500);
+            } catch (err) { window.showModal('error', 'Gagal Mengirim', err.message || 'Terjadi kesalahan saat mengirim data.'); } finally { btnSubmit.disabled = false; btnSubmit.innerHTML = `<i data-lucide="send" class="w-4 h-4 sm:w-5 sm:h-5"></i> Kirim Final & Selesai`; if(window.lucide) window.lucide.createIcons(); }
+        }
+
+        window.loadMOView = async function(viewName) {
+            const containerId = viewName === 'rekapan' ? 'mo-rekapan-tbody' : 'mo-hasil-container'; const filterYearId = viewName === 'rekapan' ? 'mo-year-filter-rekap' : 'mo-year-filter-hasil'; const filterBatchId = viewName === 'rekapan' ? 'mo-batch-filter-rekap' : 'mo-batch-filter-hasil';
+            document.getElementById(containerId).innerHTML = `<div class="col-span-full p-8 text-center text-gray-500"><i data-lucide="loader-2" class="w-8 h-8 animate-spin mx-auto mb-2"></i> Memuat Data...</div>`;
+            try {
+                await window.fetchAllSubmittedForms(); const approvedForms = window.allSubmittedForms.filter(f => f.isApprovedByETD);
+                const yearSet = new Set(); const batchSet = new Set(); window.moParticipantRecords = [];
+                approvedForms.forEach(form => {
+                    const formYear = new Date(form.createdAt).getFullYear().toString(); yearSet.add(formYear); if(form.globalStore.batch) batchSet.add(form.globalStore.batch);
+                    form.globalStore.selectedParticipants.forEach((p, index) => {
+                        if (!p) return;
+                        window.moParticipantRecords.push({ formId: form.id, form: form, pIndex: index, participant: p, formYear: formYear, mentorStatus: form.participants_scale14[index].status || 'Diluluskan', mentorReason: form.participants_scale14[index].rejectionReason || '', userApp: (form.userApprovals && form.userApprovals[index]) ? form.userApprovals[index] : {status: 'PENDING', reason: ''}, moApp: (form.moApprovals && form.moApprovals[index]) ? form.moApprovals[index] : {status: 'PENDING', reason: ''} });
+                    });
+                });
+                window.moParticipantRecords.sort((a,b) => { if (a.mentorStatus === 'Diluluskan' && b.mentorStatus !== 'Diluluskan') return -1; if (a.mentorStatus !== 'Diluluskan' && b.mentorStatus === 'Diluluskan') return 1; return 0; });
+                let optY = `<option value="">Semua Tahun</option>`; Array.from(yearSet).sort().reverse().forEach(y => optY += `<option value="${y}">${y}</option>`); document.getElementById(filterYearId).innerHTML = optY;
+                let optB = `<option value="">Semua Batch</option>`; Array.from(batchSet).sort().forEach(b => optB += `<option value="${b}">${b}</option>`); document.getElementById(filterBatchId).innerHTML = optB;
+                if(viewName === 'rekapan') window.renderMOTableData(); else window.renderMOCardsData();
+            } catch(e) {}
+        }
+
+        window.renderMOTableData = function() {
+            const yearFilter = document.getElementById('mo-year-filter-rekap').value; const batchFilter = document.getElementById('mo-batch-filter-rekap').value;
+            let filteredRecords = window.moParticipantRecords.filter(rec => { return (yearFilter ? rec.formYear === yearFilter : true) && (batchFilter ? rec.form.globalStore.batch === batchFilter : true); });
+            const tbody = document.getElementById('mo-rekapan-tbody'); let tHtml = ''; let counter = 1;
+            filteredRecords.forEach(rec => {
+                let calc14 = rec.form.participants_scale14[rec.pIndex]?.scores ? (Object.values(rec.form.participants_scale14[rec.pIndex].scores).reduce((a,b)=>a+Number(b),0)/6) : 0;
+                let avg14 = calc14 > 0 ? calc14.toFixed(2) : "-";
+                
+                let mocTot = 0;
+                if (rec.form.scores_mochido && rec.form.scores_mochido[rec.pIndex]) {
+                    Object.values(rec.form.scores_mochido[rec.pIndex]).forEach(x => {
+                        let v = parseFloat(x.nilai);
+                        if (!isNaN(v)) { mocTot += v; }
+                    });
+                }
+                let avgMoc = (mocTot / 4).toFixed(2); 
+
+                let ystTot = 0;
+                if (rec.form.scores_yeast && rec.form.scores_yeast[rec.pIndex]) {
+                    Object.values(rec.form.scores_yeast[rec.pIndex]).forEach(x => {
+                        let v = parseFloat(x.nilai);
+                        if (!isNaN(v)) { ystTot += v; }
+                    });
+                }
+                let avgYst = (ystTot / 4).toFixed(2);
+
+                let rowBg = "bg-white hover:bg-gray-50"; if (rec.moApp.status === 'ACCEPT' || rec.moApp.status === 'OK') rowBg = "bg-green-50 hover:bg-green-100"; else if (rec.moApp.status === 'REJECT' || rec.moApp.status === 'NOK') rowBg = "bg-red-50 hover:bg-red-100"; else if (rec.userApp.status === 'OK') rowBg = "bg-green-50 hover:bg-green-100"; else if (rec.userApp.status === 'NOK') rowBg = "bg-red-50 hover:bg-red-100";
+
+                let actionUser = `<div class="flex flex-col gap-1.5 text-center">`;
+                if (rec.userApp.status !== 'PENDING') {
+                    const colorClass = rec.userApp.status === 'OK' ? 'text-green-700 bg-green-100 border-green-300' : 'text-red-700 bg-red-100 border-red-300';
+                    actionUser += `<div class="text-[11px] font-black px-2 py-1.5 rounded border ${colorClass} inline-block mx-auto uppercase shadow-sm" style="white-space: nowrap !important; word-break: keep-all !important;">${rec.userApp.status}</div><div class="text-[10px] text-gray-600 italic mt-1 leading-tight text-center bg-white p-1 rounded-md border border-gray-100">${rec.userApp.reason}</div>`;
+                    if (window.userRole === 'ETD') actionUser += `<button onclick="window.undoAction('${rec.formId}', ${rec.pIndex}, 'USER')" class="mt-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors w-full text-center py-1">Undo (Reset)</button>`;
+                } else {
+                    if (window.userRole === 'USER') actionUser += `<div class="flex gap-1.5 justify-center mt-1"><button onclick="window.promptUserAction('${rec.formId}', ${rec.pIndex}, 'OK')" class="flex-1 text-white bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-[11px] font-bold transition-transform active:scale-95 shadow-sm">OK</button><button onclick="window.promptUserAction('${rec.formId}', ${rec.pIndex}, 'NOK')" class="flex-1 text-white bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg text-[11px] font-bold transition-transform active:scale-95 shadow-sm">NOK</button></div>`;
+                    else actionUser += `<span class="text-gray-400 text-xs italic font-medium">Menunggu User</span>`;
+                }
+                actionUser += `</div>`;
+
+                let actionMO = `<div class="flex flex-col gap-1.5 text-center">`;
+                if (rec.moApp.status !== 'PENDING') {
+                    let dispStat = rec.moApp.status; const colorClass = (dispStat === 'ACCEPT' || dispStat === 'OK') ? 'text-green-700 bg-green-100 border-green-300' : 'text-red-700 bg-red-100 border-red-300';
+                    actionMO += `<div class="text-[11px] font-black px-2 py-1.5 rounded border ${colorClass} inline-block mx-auto uppercase shadow-sm" style="white-space: nowrap !important; word-break: keep-all !important;">${dispStat}</div>`;
+                    if (window.userRole === 'ETD') actionMO += `<button onclick="window.undoAction('${rec.formId}', ${rec.pIndex}, 'MO')" class="mt-1 text-[10px] font-bold text-blue-600 hover:text-blue-800 underline transition-colors w-full text-center py-1">Undo (Reset)</button>`;
+                } else {
+                    if (window.userRole === 'MO') {
+                        if (rec.userApp.status !== 'PENDING') actionMO += `<div class="flex flex-col sm:flex-row gap-1.5 justify-center mt-1"><button onclick="window.promptMOAction('${rec.formId}', ${rec.pIndex}, 'ACCEPT')" class="w-full text-white bg-green-600 hover:bg-green-700 px-3 py-2 rounded-lg text-[10px] font-bold transition-transform active:scale-95 shadow-sm">ACCEPT</button><button onclick="window.promptMOAction('${rec.formId}', ${rec.pIndex}, 'REJECT')" class="w-full text-white bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg text-[10px] font-bold transition-transform active:scale-95 shadow-sm">REJECT</button></div>`;
+                        else actionMO += `<span class="text-gray-400 text-[10px] italic font-medium bg-gray-50 px-2 py-1 rounded">Menunggu User Selesai</span>`;
+                    } else actionMO += `<span class="text-gray-400 text-xs italic font-medium">Menunggu MO</span>`;
+                }
+                if (window.userRole === 'ETD') actionMO += `<button onclick="window.deleteSubmittedForm('${rec.formId}', 'mo')" class="mt-2 text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-1.5 rounded-lg text-[10px] font-bold transition-colors w-full text-center flex justify-center items-center gap-1 shadow-sm"><i data-lucide="trash-2" class="w-3 h-3"></i> Hapus Form</button>`;
+                actionMO += `</div>`;
+
+                let mentorStatusHtml = rec.mentorStatus === 'Diluluskan' ? `<span class="text-green-700 font-bold bg-green-100 px-2 py-1 rounded inline-block">Diluluskan</span>` : `<span class="text-red-700 font-bold bg-red-100 px-2 py-1 rounded inline-block">Tidak Diluluskan</span>`;
+                let keteranganMentor = rec.mentorReason || '-'; let str = rec.form.participants_scale14[rec.pIndex].strengths || '-'; let imp = rec.form.participants_scale14[rec.pIndex].improvements || '-';
+
+                tHtml += `<tr class="border-b border-gray-200 transition-colors ${rowBg}"><td class="p-3 text-center font-bold text-gray-800 min-w-[50px]">${counter++}</td><td class="p-3 font-bold text-gray-800 min-w-[200px] whitespace-normal">${rec.participant.namaPeserta}</td><td class="p-3 text-gray-600 min-w-[120px]">${rec.participant.idPelamar}</td><td class="p-3 text-gray-600 min-w-[150px] whitespace-normal">${rec.form.globalStore.flagship}</td><td class="p-3 text-gray-600 min-w-[150px] whitespace-normal">${rec.participant.penempatan || '-'}</td><td class="p-3 text-center font-bold text-blue-600 min-w-[140px]">${avgMoc}</td><td class="p-3 text-center font-bold text-purple-600 min-w-[140px]">${avgYst}</td><td class="p-3 text-center font-bold text-orange-600 min-w-[120px]">${avg14}</td><td class="p-3 text-sm min-w-[200px] whitespace-normal"><div class="line-clamp-3" title="${str}">${str}</div></td><td class="p-3 text-sm min-w-[200px] whitespace-normal"><div class="line-clamp-3" title="${imp}">${imp}</div></td><td class="p-3 text-xs align-top min-w-[160px]">${mentorStatusHtml}</td><td class="p-3 text-sm align-top min-w-[180px] whitespace-normal"><div class="line-clamp-3">${keteranganMentor}</div></td><td class="p-3 align-middle min-w-[180px]">${actionUser}</td><td class="p-3 align-middle min-w-[160px]">${actionMO}</td></tr>`;
+            });
+            if(!tHtml) tHtml = `<tr><td colspan="15" class="p-8 text-center text-gray-500 font-bold bg-gray-50">Tidak ada data untuk filter ini.</td></tr>`;
+            tbody.innerHTML = tHtml; if(window.lucide) window.lucide.createIcons();
+        }
+
+        window.renderMOCardsData = function() {
+            const yearFilter = document.getElementById('mo-year-filter-hasil').value; const batchFilter = document.getElementById('mo-batch-filter-hasil').value;
+            let filteredRecords = window.moParticipantRecords.filter(rec => { return (yearFilter ? rec.formYear === yearFilter : true) && (batchFilter ? rec.form.globalStore.batch === batchFilter : true); });
+            const cardContainer = document.getElementById('mo-hasil-container'); let cHtml = '';
+            filteredRecords.forEach(rec => {
+                let cardBg = rec.mentorStatus === 'Diluluskan' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200';
+                let deleteBtnCard = window.userRole === 'ETD' ? `<button onclick="window.deleteSubmittedForm('${rec.formId}', 'mo')" class="w-full py-2.5 sm:py-3 bg-red-50 border border-red-200 text-red-700 font-black uppercase tracking-wider rounded-xl hover:bg-red-100 transition-colors text-xs shadow-sm flex items-center justify-center gap-2 mt-2">Hapus Form <i data-lucide="trash-2" class="w-3 h-3"></i></button>` : '';
+                cHtml += `<div class="${cardBg} border rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between transition-transform hover:-translate-y-1"><div><div class="flex justify-between items-start mb-3"><span class="font-black text-gray-800 text-base sm:text-lg uppercase leading-tight pr-2">${rec.participant.namaPeserta}</span><span class="px-2 py-1 text-[10px] font-bold uppercase rounded shrink-0 ${rec.mentorStatus === 'Diluluskan' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}">${rec.mentorStatus}</span></div><p class="text-xs text-gray-600 mb-4 bg-white/50 inline-block px-2 py-1 rounded">ID: <b>${rec.participant.idPelamar}</b> <br class="sm:hidden"/>| Batch: <b>${rec.form.globalStore.batch}</b></p><div class="text-xs sm:text-sm space-y-1.5 mb-5 bg-white/40 p-3 rounded-lg border border-white/50"><p class="flex justify-between"><span class="font-semibold text-gray-500">Mentor</span> <span class="font-bold text-gray-800 text-right">${rec.form.mentorName}</span></p><p class="flex justify-between"><span class="font-semibold text-gray-500">Lokasi</span> <span class="font-bold text-gray-800 text-right truncate pl-2">${rec.form.globalStore.flagship}</span></p></div></div><div><button onclick="window.openSubmittedForm('${rec.formId}')" class="w-full py-2.5 sm:py-3 bg-white border border-gray-300 text-gray-800 font-black uppercase tracking-wider rounded-xl hover:bg-gray-50 transition-colors text-xs shadow-sm flex items-center justify-center gap-2">Buka Detail <i data-lucide="external-link" class="w-3 h-3"></i></button>${deleteBtnCard}</div></div>`;
+            });
+            if(!cHtml) cHtml = `<div class="col-span-full p-8 text-center text-gray-500 bg-white rounded-xl border border-dashed border-gray-300">Tidak ada data untuk filter ini.</div>`;
+            cardContainer.innerHTML = cHtml; if(window.lucide) window.lucide.createIcons();
+        }
+
+        window.promptUserAction = function(formId, participantIndex, status) {
+            window.activeUserAction = { formId, participantIndex, status }; const modal = document.getElementById('userActionModal');
+            document.getElementById('userActionTitle').innerText = status === 'OK' ? 'Setujui Peserta (OK)' : 'Tolak Peserta (NOK)'; const reasonInput = document.getElementById('userActionReason'); const btnConfirm = document.getElementById('userActionConfirmBtn'); reasonInput.value = ''; 
+            if(status === 'NOK') btnConfirm.className = "flex-1 bg-red-600 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-red-700 transition-colors text-xs sm:text-sm"; else btnConfirm.className = "flex-1 bg-green-600 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-green-700 transition-colors text-xs sm:text-sm"; 
+            btnConfirm.onclick = window.executeUserAction; modal.classList.remove('hidden');
+        }
+        window.closeUserModal = function() { document.getElementById('userActionModal').classList.add('hidden'); }
+        window.executeUserAction = async function() {
+            if(!window.activeUserAction) return; const { formId, participantIndex, status } = window.activeUserAction; const reason = document.getElementById('userActionReason').value; if(!reason.trim()) return window.showModal('error', 'Alasan Wajib Diisi', 'Silakan isi alasan keputusan Anda pada kolom yang disediakan.');
+            const btnConfirm = document.getElementById('userActionConfirmBtn'); btnConfirm.innerText = "Menyimpan..."; btnConfirm.disabled = true;
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId); const docSnap = await getDoc(docRef);
+                if(docSnap.exists()) {
+                    let data = docSnap.data(); if(!data.userApprovals) data.userApprovals = Array(data.globalStore.participantCount).fill({status: 'PENDING', reason: ''});
+                    data.userApprovals[participantIndex] = { status, reason }; await updateDoc(docRef, { userApprovals: data.userApprovals, hasUnreadUpdate: true });
+                    const formIdx = window.allSubmittedForms.findIndex(f => f.id === formId); if(formIdx !== -1) window.allSubmittedForms[formIdx].userApprovals = data.userApprovals;
+                    const recIdx = window.moParticipantRecords.findIndex(r => r.formId === formId && r.pIndex === participantIndex); if(recIdx !== -1) window.moParticipantRecords[recIdx].userApp = {status, reason};
+                    window.renderMOTableData(); window.showModal('success', 'Berhasil', 'Keputusan User berhasil disimpan dan bersifat final.');
+                }
+                window.closeUserModal();
+            } catch(e) { window.showModal('error', 'Gagal', 'Gagal mengupdate status User.'); } finally { btnConfirm.innerText = "Konfirmasi Final"; btnConfirm.disabled = false; }
+        }
+
+        window.promptMOAction = function(formId, participantIndex, status) {
+            window.activeMOAction = { formId, participantIndex, status }; const modal = document.getElementById('moActionModal');
+            document.getElementById('moActionTitle').innerText = status === 'ACCEPT' ? 'Terima Peserta (ACCEPT)' : 'Tolak Peserta (REJECT)'; const btnConfirm = document.getElementById('moActionConfirmBtn');
+            if(status === 'REJECT') { btnConfirm.className = "flex-1 bg-red-600 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-red-700 transition-colors text-xs sm:text-sm"; } else { btnConfirm.className = "flex-1 bg-green-600 text-white font-bold py-3 px-2 sm:px-4 rounded-xl hover:bg-green-700 transition-colors text-xs sm:text-sm"; }
+            btnConfirm.onclick = window.executeMOAction; modal.classList.remove('hidden');
+        }
+        window.closeMOModal = function() { document.getElementById('moActionModal').classList.add('hidden'); }
+        window.executeMOAction = async function() {
+            if(!window.activeMOAction) return; const { formId, participantIndex, status } = window.activeMOAction; const btnConfirm = document.getElementById('moActionConfirmBtn'); btnConfirm.innerText = "Menyimpan..."; btnConfirm.disabled = true;
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId); const docSnap = await getDoc(docRef);
+                if(docSnap.exists()) {
+                    let data = docSnap.data(); if(!data.moApprovals) data.moApprovals = Array(data.globalStore.participantCount).fill({status: 'PENDING', reason: ''});
+                    data.moApprovals[participantIndex] = { status, reason: '' }; await updateDoc(docRef, { moApprovals: data.moApprovals, hasUnreadUpdate: true });
+                    const formIdx = window.allSubmittedForms.findIndex(f => f.id === formId); if(formIdx !== -1) window.allSubmittedForms[formIdx].moApprovals = data.moApprovals;
+                    const recIdx = window.moParticipantRecords.findIndex(r => r.formId === formId && r.pIndex === participantIndex); if(recIdx !== -1) window.moParticipantRecords[recIdx].moApp = {status, reason: ''};
+                    window.renderMOTableData(); window.showModal('success', 'Berhasil Validasi', 'Data validasi MO telah tersimpan permanen.');
+                }
+                window.closeMOModal();
+            } catch(e) { window.showModal('error', 'Gagal', 'Gagal mengupdate status.'); } finally { btnConfirm.innerText = "Konfirmasi Final"; btnConfirm.disabled = false; }
+        }
+
+        window.undoAction = function(formId, participantIndex, roleType) {
+            window.showConfirm("Batalkan Keputusan", `Anda yakin ingin membatalkan (Undo) keputusan dari pihak ${roleType} untuk peserta ini?`, async () => {
+                window.showModal('loading', 'Memproses Undo...', 'Mohon tunggu sesaat.');
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'submitted_forms', formId); const docSnap = await getDoc(docRef);
+                    if(docSnap.exists()) {
+                        let data = docSnap.data(); let updateData = {};
+                        if (roleType === 'USER') { if(!data.userApprovals) data.userApprovals = Array(data.globalStore.participantCount).fill({status: 'PENDING', reason: ''}); data.userApprovals[participantIndex] = { status: 'PENDING', reason: '' }; updateData.userApprovals = data.userApprovals; } 
+                        else if (roleType === 'MO') { if(!data.moApprovals) data.moApprovals = Array(data.globalStore.participantCount).fill({status: 'PENDING', reason: ''}); data.moApprovals[participantIndex] = { status: 'PENDING', reason: '' }; updateData.moApprovals = data.moApprovals; }
+                        await updateDoc(docRef, updateData);
+                        const formIdx = window.allSubmittedForms.findIndex(f => f.id === formId); if(formIdx !== -1) { if(roleType === 'USER') window.allSubmittedForms[formIdx].userApprovals = data.userApprovals; if(roleType === 'MO') window.allSubmittedForms[formIdx].moApprovals = data.moApprovals; }
+                        const recIdx = window.moParticipantRecords.findIndex(r => r.formId === formId && r.pIndex === participantIndex); if(recIdx !== -1) { if(roleType === 'USER') window.moParticipantRecords[recIdx].userApp = {status: 'PENDING', reason: ''}; if(roleType === 'MO') window.moParticipantRecords[recIdx].moApp = {status: 'PENDING', reason: ''}; }
+                        window.closeModal(); window.renderMOTableData();
+                    }
+                } catch(e) { window.showModal('error', 'Gagal', 'Terjadi kesalahan saat membatalkan pilihan.'); }
+            });
+        }
+
+        window.showETDNotifications = function() {
+            if (window.userRole !== 'ETD') { window.showView('history'); return; }
+            const notif = window.etdNotifData || { pendingApprove: 0, pendingUpdates: 0 }; let html = '';
+            if (notif.pendingApprove > 0) { html += `<button onclick="window.clearNotifModalAndGo('history')" class="w-full text-left p-4 bg-amber-50 hover:bg-amber-100 rounded-xl border border-amber-200 transition-colors flex items-center justify-between group"><div class="flex items-center gap-3"><div class="p-2 bg-amber-200 text-amber-800 rounded-lg"><i data-lucide="clock" class="w-5 h-5"></i></div><div><div class="font-bold text-amber-900">${notif.pendingApprove} Form Menunggu Approve</div><div class="text-xs text-amber-700">Validasi penilaian final dari mentor</div></div></div><i data-lucide="chevron-right" class="w-5 h-5 text-amber-400 group-hover:text-amber-600"></i></button>`; }
+            if (notif.pendingUpdates > 0) { html += `<button onclick="window.clearUnreadAndGoRekapan()" class="w-full text-left p-4 bg-blue-50 hover:bg-blue-100 rounded-xl border border-blue-200 transition-colors flex items-center justify-between group"><div class="flex items-center gap-3"><div class="p-2 bg-blue-200 text-blue-800 rounded-lg"><i data-lucide="bell-ring" class="w-5 h-5"></i></div><div><div class="font-bold text-blue-900">${notif.pendingUpdates} Pembaruan Validasi</div><div class="text-xs text-blue-700">Terdapat update keputusan dari User / MO</div></div></div><i data-lucide="chevron-right" class="w-5 h-5 text-blue-400 group-hover:text-blue-600"></i></button>`; }
+            if (html === '') { html = `<div class="text-center p-6 text-gray-500 font-medium border border-dashed border-gray-200 rounded-xl">Tidak ada pemberitahuan baru.</div>`; }
+            document.getElementById('etdNotifContent').innerHTML = html; document.getElementById('etdNotifModal').classList.remove('hidden'); if(window.lucide) window.lucide.createIcons();
+        }
+        window.clearNotifModalAndGo = function(view) { document.getElementById('etdNotifModal').classList.add('hidden'); window.showView(view); }
+        window.clearUnreadAndGoRekapan = async function() {
+            document.getElementById('etdNotifModal').classList.add('hidden'); window.showModal('loading', 'Membuka Rekapan...', '');
+            try { const snapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'submitted_forms')); const updates = []; snapshot.forEach(docSnap => { let d = docSnap.data(); if (d.hasUnreadUpdate) { updates.push(updateDoc(docSnap.ref, { hasUnreadUpdate: false })); } }); await Promise.all(updates); } catch(e) {}
+            window.closeModal(); window.showView('rekapan');
+        }
+
+        window.toggleFormReadonly = function(isReadonly) {
+            const formContainer = document.getElementById('view-form');
+            const interactables = formContainer.querySelectorAll('.form-control, input[type="radio"], input[type="number"], input[type="text"], input[type="date"], textarea, select');
+            interactables.forEach(el => { el.disabled = isReadonly; if(isReadonly) el.classList.add('cursor-not-allowed', 'bg-transparent', 'print-border-none'); else el.classList.remove('cursor-not-allowed', 'bg-transparent', 'print-border-none'); });
+            const hides = formContainer.querySelectorAll('.readonly-hide'); hides.forEach(el => { el.style.display = isReadonly ? 'none' : ''; });
+            const canvas = document.getElementById('signatureCanvas_global'); canvas.style.pointerEvents = isReadonly ? 'none' : 'auto';
+            const printBtn = document.getElementById('btn-print-form'); const approveBtn = document.getElementById('btn-etd-approve');
+            
+            if(isReadonly) { 
+                printBtn.classList.remove('hidden'); 
+                if(window.userRole === 'ETD' && !window.isApprovedByETD) { 
+                    approveBtn.classList.remove('hidden'); 
+                } else { 
+                    approveBtn.classList.add('hidden'); 
+                } 
+            } else { 
+                printBtn.classList.add('hidden'); 
+                approveBtn.classList.add('hidden'); 
+            }
+        }
+
+        window.applyStateToDOM = function() {
+            document.getElementById('global_flagship').value = window.globalStore.flagship || ''; document.getElementById('global_batch_select').value = window.globalStore.batch || ''; document.getElementById('global_date').value = window.globalStore.date || ''; document.getElementById('global_participantCount').value = window.globalStore.participantCount || 1; document.getElementById('global_mentor').value = window.globalStore.mentorName || ''; window.updateMentorName(window.globalStore.mentorName); document.getElementById('comments_mochido').value = window.globalStore.commentsMochido || ''; document.getElementById('comments_yeast').value = window.globalStore.commentsYeast || '';
+            window.updateAvailableBatchesByDate();
+            if (window.globalStore.signatureDataUrl) { const img = new Image(); img.onload = () => { const canvas = document.getElementById('signatureCanvas_global'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); window.syncSignatureToForms(); }; img.src = window.globalStore.signatureDataUrl; } else { window.clearGlobalSignature(); }
+            window.renderGlobalParticipantInputs(); window.reRenderAllTables(); window.renderMOStampsInForm();
+        }
+
+        window.renderMOStampsInForm = function() {
+            const container = document.getElementById('mo-stamps-container');
+            if (window.viewMode !== 'READONLY') { container.classList.add('hidden'); return; }
+            container.classList.remove('hidden');
+            let html = `<div class="mb-4 flex items-center gap-2 no-print"><span class="px-3 py-1 bg-blue-100 text-blue-800 font-bold text-[10px] sm:text-xs rounded">${window.isApprovedByETD ? 'Status: Approved ETD (Masuk Rekap)' : 'Status: Menunggu Approve ETD'}</span></div>`;
+            if((window.moApprovals && window.moApprovals.length > 0) || (window.userApprovals && window.userApprovals.length > 0)) {
+                html += `<h4 class="text-sm font-bold text-gray-800 mb-3 uppercase tracking-wide">Status Keputusan User & Validasi MO</h4><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">`;
+                for(let i=0; i<window.globalStore.participantCount; i++) {
+                    const userApp = (window.userApprovals && window.userApprovals[i]) ? window.userApprovals[i] : {status: 'PENDING', reason: ''};
+                    const moApp = (window.moApprovals && window.moApprovals[i]) ? window.moApprovals[i] : {status: 'PENDING', reason: ''};
+                    const p = window.globalStore.selectedParticipants[i]; const pName = p ? p.namaPeserta : `Peserta ${i+1}`;
+                    let userStamp = `<div class="font-black text-gray-400">PENDING USER</div>`;
+                    if(userApp.status === 'OK') userStamp = `<div class="font-black text-green-600">USER: OK</div><div class="text-[10px] italic text-gray-600 mt-1 leading-tight">${userApp.reason}</div>`;
+                    if(userApp.status === 'NOK') userStamp = `<div class="font-black text-red-600">USER: NOK</div><div class="text-[10px] italic text-red-700 mt-1 leading-tight">${userApp.reason}</div>`;
+                    let moStamp = `<div class="font-black text-gray-400">PENDING MO</div>`;
+                    if(moApp.status === 'ACCEPT' || moApp.status === 'OK') moStamp = `<div class="font-black text-green-600 text-lg uppercase tracking-wider">MO: ACCEPT</div>`;
+                    if(moApp.status === 'REJECT' || moApp.status === 'NOK') moStamp = `<div class="font-black text-red-600 text-lg uppercase tracking-wider">MO: REJECT</div>`;
+                    html += `<div class="p-4 bg-gray-50 border border-gray-200 rounded-xl text-center flex flex-col justify-between h-full shadow-sm"><div class="text-xs font-bold text-gray-800 uppercase mb-3 border-b border-gray-200 pb-2">${pName}</div><div class="space-y-3"><div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">${userStamp}</div><div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">${moStamp}</div></div></div>`;
+                }
+                html += `</div>`;
+            }
+            container.innerHTML = html; if(window.lucide) window.lucide.createIcons();
+        }
+
+        window.goToStep = function(step) {
+            if(step > 1 && window.viewMode === 'DRAFT') {
+                if (!window.globalStore.flagship.trim() || !window.globalStore.batch || !window.globalStore.date) return window.showModal('error', 'Informasi Belum Lengkap', 'Nama Store, Batch, dan Tanggal Penilaian wajib diisi!');
+                for (let i = 0; i < window.globalStore.participantCount; i++) if (!window.globalStore.selectedParticipants[i]) return window.showModal('error', 'Peserta Belum Dipilih', `Silakan pilih Peserta ${i+1}.`);
+                if (!window.globalStore.mentorName.trim() || !window.globalStore.signatureDataUrl) return window.showModal('error', 'Data Mentor Belum Lengkap', 'Nama dan Tanda Tangan Mentor wajib diisi.');
+            }
+            document.querySelectorAll('.form-tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.step-indicator').forEach(el => { el.className = "step-indicator px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-sm shadow-md flex items-center gap-1.5 sm:gap-2 bg-baker-700/80 text-white transition-all opacity-70 hover:opacity-100 cursor-pointer"; el.querySelector('span').className = "bg-white/20 text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs"; });
+            const activeStep = document.getElementById(`step-${step}`);
+            if(activeStep) { activeStep.className = "step-indicator px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg font-bold text-[10px] sm:text-sm shadow-md flex items-center gap-1.5 sm:gap-2 bg-white text-baker-900 transition-all cursor-pointer border border-gray-200"; activeStep.querySelector('span').className = "bg-baker-900 text-white rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs"; }
+            if(step === 1) document.getElementById('tab-content-scale14').classList.remove('hidden');
+            if(step === 2) document.getElementById('tab-content-beverage').classList.remove('hidden');
+            if(step === 3) document.getElementById('tab-content-sidedish').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' }); if(window.lucide) window.lucide.createIcons();
+        }
+
+        window.syncGlobalData = function(field, value) { window.globalStore[field] = value; if (field === 'date') window.updateAvailableBatchesByDate(); }
+        window.updateMentorName = function(name) { window.globalStore.mentorName = name; document.querySelectorAll('.display-mentor-name').forEach(el => el.innerText = name || '-'); }
+        window.populateBatchSelect = function() { 
+            const select = document.getElementById('global_batch_select'); 
+            if (window.availableBatches.length === 0) { 
+                select.innerHTML = `<option value="">-- Tidak ada Data (Periksa Master) --</option>`; 
+                select.value = ''; return; 
+            } 
+            let html = `<option value="">-- Pilih Batch --</option>`; 
+            window.availableBatches.forEach(b => { 
+                if(b && String(b).trim() !== '') html += `<option value="${b}">${b}</option>`; 
+            }); 
+            select.innerHTML = html; 
+            select.value = window.globalStore.batch || ''; 
+        }
+        window.handleBatchSelect = function(batchVal) { window.globalStore.batch = batchVal; for (let i = 0; i < window.globalStore.participantCount; i++) window.globalStore.selectedParticipants[i] = null; window.renderGlobalParticipantInputs(); window.reRenderAllTables(); }
+        window.syncGlobalParticipants = function(val) { let cnt = parseInt(val) || 1; if (cnt < 1) cnt = 1; if (cnt > 10) cnt = 10; document.getElementById('global_participantCount').value = cnt; window.globalStore.participantCount = cnt; while (window.globalStore.selectedParticipants.length < cnt) window.globalStore.selectedParticipants.push(null); if (window.globalStore.selectedParticipants.length > cnt) window.globalStore.selectedParticipants = window.globalStore.selectedParticipants.slice(0, cnt); window.renderGlobalParticipantInputs(); while (window.participants_scale14.length < cnt) window.participants_scale14.push({ scores: {}, status: 'Diluluskan', rejectionReason: '', improvements: '', strengths: '' }); if (window.participants_scale14.length > cnt) window.participants_scale14 = window.participants_scale14.slice(0, cnt); window.reRenderAllTables(); }
+        
+        window.renderGlobalParticipantInputs = function() {
+            const container = document.getElementById('global_participant_names_container');
+            if (!window.globalStore.batch) { container.innerHTML = `<div class="col-span-full p-4 bg-baker-50 border border-baker-200 rounded-lg text-center text-xs sm:text-sm font-bold text-baker-800">Pilih "Batch" terlebih dahulu.</div>`; return; }
+            const filteredParticipants = window.allMasterParticipants.filter(p => { return (String(p.batch) === String(window.globalStore.batch)) && (p.isActive || window.globalStore.selectedParticipants.some(sel => sel && sel.idPelamar === p.idPelamar)); });
+            let html = '';
+            for (let i = 0; i < window.globalStore.participantCount; i++) {
+                const currentSelected = window.globalStore.selectedParticipants[i]; const selectedId = currentSelected ? currentSelected.idPelamar : '';
+                html += `<div class="p-3 bg-baker-100/50 rounded-lg border border-baker-200 space-y-2"><div class="flex items-center justify-between"><span class="text-xs font-bold text-baker-900 uppercase">Peserta ${i + 1}</span>${currentSelected ? `<span class="text-[10px] bg-green-100 text-green-800 font-bold px-2 py-0.5 rounded">Terhubung</span>` : `<span class="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded">Belum dipilih</span>`}</div><select onchange="window.handleParticipantSelect(${i}, this.value)" class="form-control w-full p-2.5 sm:p-2 border border-baker-300 rounded-lg text-sm outline-none bg-white font-semibold cursor-pointer"><option value="">-- Pilih Nama Peserta --</option>${filteredParticipants.map(p => `<option value="${p.idPelamar}" ${String(p.idPelamar) === String(selectedId) ? 'selected' : ''}>${p.namaPeserta} (${p.idPelamar})</option>`).join('')}</select>${currentSelected ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-2 border-t border-baker-200 text-xs sm:text-[11px] text-gray-700 bg-white p-2 rounded"><div><span class="text-gray-400">ID Pelamar:</span> <b class="text-baker-900">${currentSelected.idPelamar || '-'}</b></div><div><span class="text-gray-400">Penempatan:</span> <b class="text-gray-800">${currentSelected.penempatan || '-'}</b></div></div>` : ''}</div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        window.handleParticipantSelect = function(index, idPelamar) { if (!idPelamar) window.globalStore.selectedParticipants[index] = null; else { const found = window.allMasterParticipants.find(p => String(p.idPelamar) === String(idPelamar)); if (found) window.globalStore.selectedParticipants[index] = { ...found }; } window.renderGlobalParticipantInputs(); window.reRenderAllTables(); }
+        window.reRenderAllTables = function() { window.renderScale14Table(); window.renderMochidoTable(); window.renderYeastTable(); window.renderParticipantFeedback(); }
+
+        const scale14Categories = [
+          { category: 'A. ASPEK TEKNIS (KETERAMPILAN KERJA & PRODUKSI)', items: [ { id: 'tech_1', name: 'Tanggung Jawab Terhadap Pekerjaan. Menyelesaikan pekerjaan yang diberikan dan memberikan hasil sesuai dengan harapan' }, { id: 'tech_2', name: 'Kebersihan Kerja. Dapat bekerja dengan bersih dan mampu menjaga kebersihan area kerja' }, { id: 'tech_3', name: 'Pengetahuan Dalam Pengolahan Produk. Mampu mengisi form produksi yang sudah disediakan dengan benar' }, { id: 'tech_4', name: 'Keterampilan Kerja. Mampu melakukan pekerjaan sesuai dengan SOP' }, { id: 'tech_5', name: 'Ketepatan waktu dalam menyelesaikan pekerjaan. Mampu menyelesaikan tugas sesuai dengan waktu yang diberikan' } ] },
+          { category: 'B. ASPEK NON-TEKNIS (SIKAP & ETIKA KERJA)', items: [ { id: 'nontech_1', name: 'Penampilan. Berpenampilan rapi, bersih dan sesuai dengan SOP' }, { id: 'nontech_2', name: 'Disiplin Kerja. Datang kerja tepat waktu, selesai istirahat tepat waktu dan pulang tidak lebih awal, bila ijin dilakukan dengan memberi keterangan' }, { id: 'nontech_3', name: 'Keterampilan Interpersonal. Kemampuan untuk berkomunikasi dengan rekan kerja/atasan/orang lain dengan sopan, jelas, efektif menyampaikan pendapat' }, { id: 'nontech_4', name: 'Daya tangkap terhadap intruksi yang diberikan. Mampu menangkap dengan jelas perintah mengenai pekerjaan yang diberikan oleh atasan' }, { id: 'nontech_5', name: 'Inisiatif. Mau membantu orang lain tanpa harus disuruh' }, { id: 'nontech_6', name: 'Sopan santun. Bersikap sopan dalam bekerja, menghargai dan bersikap santun terhadap atasan maupun rekan kerja' }, { id: 'nontech_7', name: 'Semangat. Antusias dalam melakukan pekerjaan, dan menunjukan sikap aktif bertanya, serta tidak menunjukan keterpaksaan dalam bekerja' }, { id: 'nontech_8', name: 'Integritas. Kejujuran dalam bersikap dan perkataan' }, { id: 'nontech_9', name: 'Kerjasama. Mampu bekerja sama, mendukung tim, menghargai pendapat kepada atasan dan rekan kerja' }, { id: 'nontech_10', name: 'Sikap positif. Mampu bertindak ramah, mudah beradaptasi, dan memberikan dampak positif saat berada di lingkungan kerja.' } ] }
+        ];
+
+        window.renderScale14Table = function() {
+            const thead = document.getElementById('tableHead_scale14'); const tbody = document.getElementById('tableBody_scale14');
+            let h1 = `<tr class="bg-baker-100 text-baker-900 border-b-2 border-baker-200"><th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[250px] sm:w-[350px] whitespace-normal" rowspan="2">ASPEK PENILAIAN (TEKNIS & NON TEKNIS)</th>`;
+            for(let i = 0; i < window.globalStore.participantCount; i++) { const sel = window.globalStore.selectedParticipants[i]; const pName = sel ? sel.namaPeserta : `Peserta ${i+1}`; const pId = sel ? `ID: ${sel.idPelamar}` : 'Belum dipilih'; h1 += `<th class="border-r border-gray-300 p-3 text-center bg-gray-50 min-w-[220px] sm:minw-[280px]"><div class="text-xs text-gray-500 font-bold mb-1 uppercase">Peserta ${i + 1}</div><div class="space-y-1.5"><div class="w-full p-2 bg-white border border-gray-300 rounded text-sm font-bold text-gray-800 break-words print-border-none">${pName}</div><div class="text-[11px] text-baker-800 font-semibold bg-baker-50 py-0.5 px-2 rounded border border-baker-200 print-border-none">${pId}</div></div></th>`; }
+            h1 += `</tr><tr class="bg-baker-50">`;
+            for(let i = 0; i < window.globalStore.participantCount; i++) { h1 += `<th class="border-r border-t border-gray-300 p-2 text-center text-[10px] sm:text-[11px] font-bold text-baker-700 bg-baker-100/50"><div class="flex justify-between sm:grid sm:grid-cols-4 gap-1 sm:gap-2 px-1 text-[10px]"><span>1 (Sangat Kurang)</span><span class="hidden sm:inline">2 (Kurang)</span><span class="hidden sm:inline">3 (Baik)</span><span class="hidden sm:inline">4 (Sangat Baik)</span></div></th>`; }
+            thead.innerHTML = h1 + `</tr>`;
+
+            let bHTML = '';
+            scale14Categories.forEach(sec => {
+                bHTML += `<tr class="bg-gray-100 border-y border-gray-300"><td class="border-r border-gray-300 p-3 font-bold text-gray-800 uppercase text-xs bg-gray-200/60 whitespace-normal" colspan="${window.globalStore.participantCount + 1}">${sec.category}</td></tr>`;
+                sec.items.forEach(item => {
+                    bHTML += `<tr class="hover:bg-baker-50/30 transition-colors border-b border-gray-200"><td class="border-r border-gray-300 p-3 text-sm font-medium text-gray-800 bg-white whitespace-normal">${item.name}</td>`;
+                    for(let pIdx = 0; pIdx < window.globalStore.participantCount; pIdx++) {
+                        let cur = window.participants_scale14[pIdx].scores[item.id];
+                        bHTML += `<td class="border-r border-gray-200 p-1 sm:p-2 bg-white text-center align-middle"><div class="flex justify-between sm:grid sm:grid-cols-4 gap-2 items-center justify-items-center px-2">`;
+                        [1,2,3,4].forEach(num => { bHTML += `<label class="flex flex-col items-center cursor-pointer group p-1 sm:p-2"><input type="radio" name="s14_${pIdx}_${item.id}" ${cur === num ? 'checked' : ''} onchange="window.handleScoreS14(${pIdx}, '${item.id}', ${num})" class="w-5 h-5 sm:w-6 sm:h-6 text-baker-600 accent-baker-600 cursor-pointer" ${window.viewMode === 'READONLY'?'disabled':''}><span class="text-[10px] sm:text-xs text-gray-500 font-bold mt-1">${num}</span></label>`; });
+                        bHTML += `</div></td>`;
+                    }
+                    bHTML += `</tr>`;
+                });
+            });
+
+            bHTML += `<tr class="bg-gray-100 border-t-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-gray-700 whitespace-nowrap">TOTAL POIN SKOR</td>`;
+            for(let pIdx = 0; pIdx < window.globalStore.participantCount; pIdx++) { let p = window.participants_scale14[pIdx] || { scores: {} }; let tot = 0; for (let k in p.scores) { let v = p.scores[k]; if (!isNaN(v)) tot += v; } bHTML += `<td class="border-r border-gray-300 p-3 text-center text-base font-black text-baker-700" id="tot_s14_${pIdx}">${tot}</td>`; }
+            bHTML += `</tr>`;
+
+            bHTML += `<tr class="bg-baker-100 border-b border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-baker-900 whitespace-nowrap">NILAI RATA - RATA (Total / 6)</td>`;
+            for(let pIdx = 0; pIdx < window.globalStore.participantCount; pIdx++) { let p = window.participants_scale14[pIdx] || { scores: {} }; let tot = 0; for (let k in p.scores) { let v = p.scores[k]; if (!isNaN(v)) tot += v; } let avg = (tot / 6).toFixed(2); bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-baker-900" id="avg_s14_${pIdx}">${avg}</td>`; }
+            bHTML += `</tr>`;
+
+            bHTML += `<tr class="bg-gray-50 border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-bold text-gray-700 whitespace-nowrap">STATUS KELULUSAN (SISTEM)</td>`;
+            for(let pIdx = 0; pIdx < window.globalStore.participantCount; pIdx++) { 
+                let p = window.participants_scale14[pIdx] || { scores: {} }; let tot = 0; for (let k in p.scores) { let v = p.scores[k]; if (!isNaN(v)) tot += v; } let avg = (tot / 6).toFixed(2); let statusAuto = (avg >= 6) ? 'Lulus' : 'Tidak Lulus'; let clsAuto = (avg >= 6) ? 'text-green-600 bg-green-100' : 'text-red-600 bg-red-100'; bHTML += `<td class="border-r border-gray-300 p-3 text-center align-middle"><span id="auto_status_s14_${pIdx}" class="font-bold px-3 py-1 rounded-full text-xs ${clsAuto}">${statusAuto}</span></td>`; 
+            }
+            bHTML += `</tr>`;
+
+            bHTML += `<tr class="bg-white border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-bold text-gray-700 whitespace-nowrap">STATUS REKOMENDASI</td>`;
+            for(let i = 0; i < window.globalStore.participantCount; i++) {
+                let p = window.participants_scale14[i] || { status: 'Diluluskan', rejectionReason: '' }; let bgCls = p.status === 'Diluluskan' ? 'bg-green-50 text-green-700 border-green-300' : 'bg-red-50 text-red-700 border-red-300'; let dis = window.viewMode === 'READONLY' ? 'disabled' : ''; bHTML += `<td class="border-r border-gray-300 p-3 text-center align-top space-y-2"><select class="form-control w-full p-2 border rounded-lg text-sm font-bold outline-none cursor-pointer ${bgCls}" onchange="window.handleStatusS14(${i}, this.value)" ${dis}><option value="Diluluskan" ${p.status === 'Diluluskan' ? 'selected' : ''}>Diluluskan</option><option value="Tidak Diluluskan" ${p.status === 'Tidak Diluluskan' ? 'selected' : ''}>Tidak Diluluskan</option></select>`;
+                if (p.status === 'Tidak Diluluskan') { bHTML += `<div class="mt-2 text-left"><label class="block text-[11px] font-bold text-red-600 mb-1">Alasan: *</label><textarea class="form-control w-full p-3 border border-red-200 rounded-md text-sm outline-none bg-red-50/20 text-gray-800 resize-none min-h-[70px] reason-s14" data-index="${i}" placeholder="Alasan..." ${dis}>${p.rejectionReason}</textarea></div>`; } bHTML += `</td>`;
+            }
+            bHTML += `</tr>`;
+            tbody.innerHTML = bHTML; document.querySelectorAll('.reason-s14').forEach(ta => { ta.addEventListener('input', (e) => { window.participants_scale14[e.target.getAttribute('data-index')].rejectionReason = e.target.value; }); });
+        }
+
+        window.handleScoreS14 = function(pIdx, itemId, val) { window.participants_scale14[pIdx].scores[itemId] = val; window.calculateScale14Totals(); }
+        window.handleStatusS14 = function(pIdx, val) { window.participants_scale14[pIdx].status = val; window.renderScale14Table(); }
+
+        window.calculateScale14Totals = function() {
+            for(let pIdx = 0; pIdx < window.globalStore.participantCount; pIdx++) { 
+                let p = window.participants_scale14[pIdx] || { scores: {} }; let tot = 0; for (let k in p.scores) { let v = p.scores[k]; if (!isNaN(v)) tot += v; } let avg = (tot / 6).toFixed(2); 
+                const totEl = document.getElementById(`tot_s14_${pIdx}`); const avgEl = document.getElementById(`avg_s14_${pIdx}`); const autoStatusEl = document.getElementById(`auto_status_s14_${pIdx}`);
+                if(totEl) totEl.innerText = tot; if(avgEl) avgEl.innerText = avg;
+                if(autoStatusEl) { if (avg >= 6) { autoStatusEl.innerText = 'Lulus'; autoStatusEl.className = 'font-bold px-3 py-1 rounded-full text-xs text-green-600 bg-green-100'; } else { autoStatusEl.innerText = 'Tidak Lulus'; autoStatusEl.className = 'font-bold px-3 py-1 rounded-full text-xs text-red-600 bg-red-100'; } }
+            }
+        }
+
+        window.renderParticipantFeedback = function() {
+            const container = document.getElementById('participantFeedbackContainer'); let html = '';
+            for(let i = 0; i < window.globalStore.participantCount; i++) {
+                let p = window.participants_scale14[i]; const sel = window.globalStore.selectedParticipants[i]; const displayName = sel ? `${sel.namaPeserta} (${sel.idPelamar})` : `Peserta ${i + 1}`;
+                html += `<div class="bg-white p-4 sm:p-5 rounded-xl border border-baker-200 shadow-sm flex flex-col gap-4 print-border-none"><div class="flex items-center justify-between border-b pb-3"><span class="bg-baker-100 text-baker-900 font-black text-[10px] sm:text-xs px-2.5 py-1 rounded-full uppercase shrink-0">Peserta ${i + 1}</span><span class="text-sm font-bold text-gray-800 truncate pl-2">${displayName}</span></div><div><label class="block text-xs font-bold text-gray-800 mb-1.5 flex items-center justify-between"><span class="text-baker-900 uppercase">HAL YANG PERLU DITINGKATKAN</span><span class="text-red-500 text-[10px] readonly-hide">*Wajib</span></label><textarea class="form-control w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baker-500 outline-none resize-none text-sm bg-white min-h-[90px]" oninput="window.participants_scale14[${i}].improvements = this.value" placeholder="Tuliskan area pengembangan..." ${window.viewMode === 'READONLY'?'disabled':''}>${p.improvements || ''}</textarea></div><div><label class="block text-xs font-bold text-gray-800 mb-1.5 flex items-center justify-between"><span class="text-green-800 uppercase">HAL YANG PERLU DIPERTAHANKAN</span><span class="text-green-600 text-[10px] readonly-hide">*Wajib</span></label><textarea class="form-control w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-baker-500 outline-none resize-none text-sm bg-white min-h-[90px]" oninput="window.participants_scale14[${i}].strengths = this.value" placeholder="Tuliskan potensi positif..." ${window.viewMode === 'READONLY'?'disabled':''}>${p.strengths || ''}</textarea></div></div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        const mochidoTasks = [
+            { no: 1, id: 'm_1', name: 'Mengetahui takaran bahan baku yang digunakan untuk pembuatan donut mochido (Premix, telur, air, canola)<br>jika hafal resep maka nilainya 3', maxPoint: 3 },
+            { no: 2, id: 'm_2', name: 'Mengetahui langkah-langkah pembuatan donut mochido sesuai SOP:<br>langkah awal siapkan telur<br>siapkan canola oil<br>siapkan premix<br>siapkan air<br>Jika urutannya benar maka nilainya 2, jika salah maka nilai 1', maxPoint: 2 },
+            { no: 3, id: 'm_3', name: 'Dapat melakukan pencarian suhu air dengan tepat 113°F', maxPoint: 1 },
+            { no: 4, id: 'm_4', name: 'Mengetahui waktu mixing yang benar untuk jenis donut mochido', maxPoint: 2 },
+            { no: 5, id: 'm_5', name: 'Dapat melakukan scrap adonan dengan baik dan benar :<br>scrap adonan mulai dari kebersihan mixing bowl (0,5),<br>cara penggunaan scraper (0,5),<br>kebersihan hopper (0,5)<br>dan kepadatan adonan di dalam hopper (0,5)', maxPoint: 2 },
+            { no: 6, id: 'm_6', name: 'Mengetahui skala yang digunakan untuk cutting donut mochido (2,5 - 2,7)', maxPoint: 2 },
+            { no: 7, id: 'm_7', name: 'Mengetahui berat takaran donut sebelum digoreng untuk jenis donut mochido (150gr, 3pcs @50gr)', maxPoint: 1 },
+            { no: 8, id: 'm_8', name: 'Melakukan pemasangan Plunger, Hopper, dan silinder pada waktu yang ditentukan (saat mixing)', maxPoint: 1 },
+            { no: 9, id: 'm_9', name: 'Mengetahui Plunger dan silinder yang sesuai dengan jenis donut', maxPoint: 1 },
+            { no: 10, id: 'm_10', name: 'Mengetahui jarak permukaan minyak dan silinder yang sesuai untuk donut mochido (5 cm)', maxPoint: 2 },
+            { no: 11, id: 'm_11', name: 'Dapat melakukan cutting donut mesin dalam satu screen sesuai SOP :<br>jika sesuai SOP (25pcs) maka nilainya 2 (di screen pertama)<br>jika tidak sesuai maka nilainya 1', maxPoint: 2 },
+            { no: 12, id: 'm_12', name: 'Dapat melakukan proses Frying donut dengan benar :<br>Mengetahui cara pemasangan Submerged<br>Mengetahui waktu Fryingnya <b>3 menit 30 detik</b>', maxPoint: 2 },
+            { no: 13, id: 'm_13', name: 'Dapat menghasilkan donut sesuai target standar jadi 1 quart :<br>Jika target sesuai maka nilainya 4 (40-45 pcs)<br>Jika target 35-40 pcs maka nilainya 2<br>Jika target 20-34 pcs maka nilainya 1<br>Jika di bawah 20 pcs maka nilainya 0', maxPoint: 4 },
+            { no: 14, id: 'm_14', name: 'Mengetahui nama mesin dan peralatan yang digunakan untuk finishing donut (tunjuk 4 sarana finishing)', maxPoint: 2 },
+            { no: 15, id: 'm_15', name: 'Menggunakan sarung tangan karet pada saat akan melakukan finishing dan menyentuh donut matang', maxPoint: 2 },
+            { no: 16, id: 'm_16', name: 'Membelah donut dengan cara yang tepat', maxPoint: 2 },
+            { no: 17, id: 'm_17', name: 'Mengetahui jenis-jenis finishing donut mochido', maxPoint: 1 },
+            { no: 18, id: 'm_18', name: 'Mengetahui jenis-jenis bahan baku finishing donut mochido', maxPoint: 2 },
+            { no: 19, id: 'm_19', name: 'Melakukan tahapan finishing dengan benar untuk donut mochido (15 pcs)<br>Standar finishing 15 pcs: 5 poin<br>Standar finishing 10 pcs: 3 poin<br>Standar Finishing 8 pcs: 1 poin<br>Standar finishing &lt;8pcs: 0 poin', maxPoint: 5 },
+            { no: 20, id: 'm_20', name: 'Melakukan display donut dengan posisi yang tepat (sesuai dengan SOP tray)', maxPoint: 1 }
+        ];
+
+        window.renderMochidoTable = function() {
+            const thead = document.getElementById('tableHead_mochido'); 
+            const tbody = document.getElementById('tableBody_mochido');
+            let h1 = `<tr class="bg-baker-100 text-baker-900 border-b-2 border-baker-200">
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[50px] sm:w-[60px]" rowspan="2">NO</th>
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[250px] sm:min-w-[300px] whitespace-normal" rowspan="2">KETERANGAN</th>
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[80px] sm:min-w-[100px] whitespace-normal" rowspan="2">POINT</th>`;
+            
+            for (let i = 0; i < window.globalStore.participantCount; i++) { 
+                const sel = window.globalStore.selectedParticipants[i]; 
+                const pName = sel ? sel.namaPeserta : `Peserta ${i+1}`; 
+                h1 += `<th class="border-r border-gray-300 p-3 text-center bg-gray-50 min-w-[100px] sm:min-w-[150px]" rowspan="2">
+                    <div class="text-xs text-gray-500 font-bold mb-1 uppercase">Peserta ${i + 1}</div>
+                    <div class="w-full p-2 bg-white border border-gray-300 rounded text-sm font-bold text-gray-800 break-words print-border-none">${pName}</div>
+                    <div class="text-[11px] font-bold text-baker-700 bg-baker-100/50 mt-2 p-1 rounded">NILAI</div>
+                </th>`; 
+            }
+            h1 += `</tr>`;
+            thead.innerHTML = h1;
+
+            let bHTML = '';
+            mochidoTasks.forEach(task => {
+                bHTML += `<tr class="hover:bg-baker-50/30 transition-colors border-b border-gray-200">`;
+                bHTML += `<td class="border-r border-gray-300 p-2 text-center font-bold text-gray-700 bg-white align-top">${task.no}</td>`;
+                bHTML += `<td class="border-r border-gray-300 p-3 font-medium text-gray-800 bg-white whitespace-normal align-top leading-relaxed">${task.name}</td>`;
+                bHTML += `<td class="border-r border-gray-300 p-2 text-center font-bold text-baker-700 bg-baker-50 align-top">${task.maxPoint}</td>`;
+                
+                for (let p = 0; p < window.globalStore.participantCount; p++) {
+                    const sc = (window.scores_mochido[p] && window.scores_mochido[p][task.id]) || { nilai: '' }; 
+                    let dis = window.viewMode === 'READONLY' ? 'disabled' : '';
+                    
+                    let sizeSelect = `<select class="form-control w-full min-w-[60px] p-2 border border-gray-300 rounded text-center text-sm font-bold text-baker-700 outline-none cursor-pointer bg-white shadow-sm" onchange="window.updateScore('scores_mochido', ${p}, '${task.id}', 'nilai', this.value, this)" ${dis}>`;
+                    sizeSelect += `<option value="" ${sc.nilai === '' ? 'selected' : ''}>-</option>`;
+                    for (let idx = 0; idx <= task.maxPoint; idx += 0.5) {
+                        sizeSelect += `<option value="${idx}" ${String(sc.nilai) === String(idx) ? 'selected' : ''}>${idx}</option>`;
+                    }
+                    sizeSelect += `</select>`;
+
+                    bHTML += `<td class="border-r border-gray-300 p-2 bg-baker-50/30 align-top">${sizeSelect}</td>`;
+                }
+                bHTML += `</tr>`;
+            });
+
+            bHTML += `<tr class="bg-gray-100 border-t-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-gray-700 whitespace-nowrap" colspan="3">TOTAL NILAI</td>`;
+            for (let p = 0; p < window.globalStore.participantCount; p++) { 
+                let tot = 0; 
+                if (window.scores_mochido[p]) { 
+                    for (let d in window.scores_mochido[p]) { 
+                        let v = parseFloat(window.scores_mochido[p][d].nilai); 
+                        if (!isNaN(v)) tot += v; 
+                    } 
+                } 
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-baker-700" id="tot_moc_${p}">${tot}</td>`; 
+            }
+            bHTML += `</tr>`;
+
+            bHTML += `<tr class="bg-baker-100 border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-baker-900 whitespace-nowrap" colspan="3">NILAI AKHIR (Total / 4)</td>`;
+            for (let p = 0; p < window.globalStore.participantCount; p++) { 
+                let tot = 0; 
+                if (window.scores_mochido[p]) { 
+                    for (let d in window.scores_mochido[p]) { 
+                        let v = parseFloat(window.scores_mochido[p][d].nilai); 
+                        if (!isNaN(v)) { tot += v; } 
+                    } 
+                } 
+                let avg = (tot / 4).toFixed(2); 
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-baker-900" id="avg_moc_${p}">${avg}</td>`; 
+            }
+            bHTML += `</tr>`;
+            tbody.innerHTML = bHTML; 
+            document.getElementById('tableHead_mochido').parentElement.className = "w-full text-left border-collapse min-w-[700px]";
+        }
+
+        const yeastTasks = [
+            { no: 1, id: 'y_1', cat: 'PENGETAHUAN PRODUKSI', catSpan: 1, name: 'Mengetahui waktu resting donut yeast:<br>After mixing 20 menit (untuk adonan discontinue)<br>After resting 10 menit (untuk adonan continue)<br>After resting 10 menit (sebelum pembuatan donut)<br>@1 poin', maxPoint: 2 },
+            { no: 2, id: 'y_2', cat: 'Ring', catSpan: 8, name: 'Dapat melakukan proses Holding dengan benar', maxPoint: 1 },
+            { no: 3, id: 'y_3', name: 'Dapat melakukan proses Rolling Donut Yeast dengan benar', maxPoint: 1 },
+            { no: 4, id: 'y_4', name: 'Dapat melakukan proses Shrinking Donut Yeast dengan benar', maxPoint: 1 },
+            { no: 5, id: 'y_5', name: 'Dapat melakukan proses Cutting Donut Yeast dengan benar', maxPoint: 1 },
+            { no: 6, id: 'y_6', name: 'Mengetahui berat adonan Ring sebelum di goreng 32 ± 2 gr', maxPoint: 1 },
+            { no: 7, id: 'y_7', name: 'Mengetahui proses Proofing untuk Donut Yeast dengan benar', maxPoint: 1 },
+            { no: 8, id: 'y_8', name: 'Mengetahui waktu frying donut Ring <b>30 detik dibalik 30 detik</b>', maxPoint: 1 },
+            { no: 9, id: 'y_9', name: 'Dapat menghasilkan donut sesuai target standar jadi ½ quart 30 pcs:<br>30 pcs: 4 poin<br>20 pcs: 2 poin<br>15 pcs: 1 poin<br>&lt;15 pcs: 0 poin', maxPoint: 4 },
+            { no: 10, id: 'y_10', cat: 'Shell/ Tart', catSpan: 8, name: 'Dapat melakukan proses Holding dengan benar', maxPoint: 1 },
+            { no: 11, id: 'y_11', name: 'Dapat melakukan proses Rolling Donut Yeast dengan benar', maxPoint: 1 },
+            { no: 12, id: 'y_12', name: 'Dapat melakukan proses Shrinking Donut Yeast dengan benar', maxPoint: 1 },
+            { no: 13, id: 'y_13', name: 'Dapat melakukan proses Cutting Donut Yeast dengan benar', maxPoint: 1 },
+            { no: 14, id: 'y_14', name: 'Mengetahui berat adonan Ring sebelum digoreng 34 ± 2 gr', maxPoint: 1 },
+            { no: 15, id: 'y_15', name: 'Mengetahui proses Proofing untuk Donut Yeast dengan benar', maxPoint: 1 },
+            { no: 16, id: 'y_16', name: 'Mengetahui waktu frying donut Shell/ Tart <b>35 detik dibalik 35 detik</b>', maxPoint: 1 },
+            { no: 17, id: 'y_17', name: 'Dapat menghasilkan donut sesuai target standar jadi ½ quart 20 pcs:<br>20 pcs: 4 poin<br>15 pcs: 2 poin<br>10 pcs: 1 poin<br>&lt;10 pcs: 0 poin', maxPoint: 4 },
+            { no: 18, id: 'y_18', cat: 'PENGETAHUAN FINISHING DAN DISPLAY', catSpan: 8, name: 'Mengetahui nama mesin dan peralatan yang digunakan untuk finishing donut (tunjuk 4 sarana finishing)', maxPoint: 2 },
+            { no: 19, id: 'y_19', name: 'Menggunakan sarung tangan karet pada saat akan melakukan finishing dan menyentuh donut matang', maxPoint: 2 },
+            { no: 20, id: 'y_20', name: 'Membelah donut dengan cara yang tepat', maxPoint: 2 },
+            { no: 21, id: 'y_21', name: 'Mengetahui jenis-jenis finishing donut yeast', maxPoint: 1 },
+            { no: 22, id: 'y_22', name: 'Mengetahui jenis-jenis bahan baku finishing donut yeast', maxPoint: 2 },
+            { no: 23, id: 'y_23', name: 'Mengetahui gramasi cream untuk filling shell', maxPoint: 1 },
+            { no: 24, id: 'y_24', name: 'Melakukan tahapan finishing dengan benar untuk donut ring (8 pcs) & shell (7 pcs) total 15 pcs<br>Standar finishing 15 pcs: 5 poin<br>Standar finishing 10 pcs: 3 poin<br>Standar Finishing 8 pcs: 1 poin<br>Standar finishing &lt;8pcs: 0 poin', maxPoint: 5 },
+            { no: 25, id: 'y_25', name: 'Melakukan display donut dengan posisi yang tepat (sesuai dengan SOP tray)', maxPoint: 1 }
+        ];
+
+        window.renderYeastTable = function() {
+            const thead = document.getElementById('tableHead_yeast'); 
+            const tbody = document.getElementById('tableBody_yeast');
+            let h1 = `<tr class="bg-baker-100 text-baker-900 border-b-2 border-baker-200">
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[50px] sm:w-[60px]" rowspan="2">NO</th>
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[120px] sm:min-w-[150px] whitespace-normal" rowspan="2">KATEGORI</th>
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[250px] sm:min-w-[300px] whitespace-normal" rowspan="2">KETERANGAN</th>
+                <th class="border-r border-gray-300 p-3 text-center align-middle font-bold min-w-[80px] sm:min-w-[100px] whitespace-normal" rowspan="2">POINT</th>`;
+            
+            for (let i = 0; i < window.globalStore.participantCount; i++) { 
+                const sel = window.globalStore.selectedParticipants[i]; 
+                const pName = sel ? sel.namaPeserta : `Peserta ${i+1}`; 
+                h1 += `<th class="border-r border-gray-300 p-3 text-center bg-gray-50 min-w-[100px] sm:min-w-[150px]" rowspan="2">
+                    <div class="text-xs text-gray-500 font-bold mb-1 uppercase">Peserta ${i + 1}</div>
+                    <div class="w-full p-2 bg-white border border-gray-300 rounded text-sm font-bold text-gray-800 break-words print-border-none">${pName}</div>
+                    <div class="text-[11px] font-bold text-baker-700 bg-baker-100/50 mt-2 p-1 rounded">NILAI</div>
+                </th>`; 
+            }
+            h1 += `</tr>`;
+            thead.innerHTML = h1;
+
+            let bHTML = '';
+            yeastTasks.forEach(task => {
+                bHTML += `<tr class="hover:bg-baker-50/30 transition-colors border-b border-gray-200">`;
+                bHTML += `<td class="border-r border-gray-300 p-2 text-center font-bold text-gray-700 bg-white align-top">${task.no}</td>`;
+                if (task.cat) { 
+                    bHTML += `<td class="border-r border-gray-300 p-2 text-center font-bold text-gray-800 bg-white align-middle" rowspan="${task.catSpan}">${task.cat}</td>`; 
+                }
+                bHTML += `<td class="border-r border-gray-300 p-3 font-medium text-gray-800 bg-white whitespace-normal align-top leading-relaxed">${task.name}</td>`;
+                bHTML += `<td class="border-r border-gray-300 p-2 text-center font-bold text-baker-700 bg-baker-50 align-top">${task.maxPoint}</td>`;
+                
+                for (let p = 0; p < window.globalStore.participantCount; p++) {
+                    const sc = (window.scores_yeast[p] && window.scores_yeast[p][task.id]) || { nilai: '' }; 
+                    let dis = window.viewMode === 'READONLY' ? 'disabled' : '';
+                    
+                    let sizeSelect = `<select class="form-control w-full min-w-[60px] p-2 border border-gray-300 rounded text-center text-sm font-bold text-baker-700 outline-none cursor-pointer bg-white shadow-sm" onchange="window.updateScore('scores_yeast', ${p}, '${task.id}', 'nilai', this.value, this)" ${dis}>`;
+                    sizeSelect += `<option value="" ${sc.nilai === '' ? 'selected' : ''}>-</option>`;
+                    for (let idx = 0; idx <= task.maxPoint; idx += 0.5) {
+                        sizeSelect += `<option value="${idx}" ${String(sc.nilai) === String(idx) ? 'selected' : ''}>${idx}</option>`;
+                    }
+                    sizeSelect += `</select>`;
+
+                    bHTML += `<td class="border-r border-gray-300 p-2 bg-baker-50/30 align-top">${sizeSelect}</td>`;
+                }
+                bHTML += `</tr>`;
+            });
+
+            bHTML += `<tr class="bg-gray-100 border-t-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-gray-700 whitespace-nowrap" colspan="4">TOTAL NILAI</td>`;
+            for (let p = 0; p < window.globalStore.participantCount; p++) { 
+                let tot = 0; 
+                if (window.scores_yeast[p]) { 
+                    for (let d in window.scores_yeast[p]) { 
+                        let v = parseFloat(window.scores_yeast[p][d].nilai); 
+                        if (!isNaN(v)) tot += v; 
+                    } 
+                } 
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-baker-700" id="tot_yst_${p}">${tot}</td>`; 
+            }
+            bHTML += `</tr>`;
+
+            bHTML += `<tr class="bg-baker-100 border-b-2 border-gray-300"><td class="border-r border-gray-300 p-3 text-right font-black text-baker-900 whitespace-nowrap" colspan="4">NILAI AKHIR (Total / 4)</td>`;
+            for (let p = 0; p < window.globalStore.participantCount; p++) { 
+                let tot = 0; 
+                if (window.scores_yeast[p]) { 
+                    for (let d in window.scores_yeast[p]) { 
+                        let v = parseFloat(window.scores_yeast[p][d].nilai); 
+                        if (!isNaN(v)) { tot += v; } 
+                    } 
+                } 
+                let avg = (tot / 4).toFixed(2); 
+                bHTML += `<td class="border-r border-gray-300 p-3 text-center text-lg font-black text-baker-900" id="avg_yst_${p}">${avg}</td>`; 
+            }
+            bHTML += `</tr>`;
+            tbody.innerHTML = bHTML; 
+            document.getElementById('tableHead_yeast').parentElement.className = "w-full text-left border-collapse min-w-[800px]";
+        }
+
+        window.updateScore = function(objName, pIdx, itemId, field, val, el) { 
+            if(!window[objName][pIdx]) window[objName][pIdx] = {}; 
+            if(!window[objName][pIdx][itemId]) window[objName][pIdx][itemId] = { aktual:'', nilai:'' }; 
+            if (field === 'nilai' && val !== '') { let num = parseFloat(val); if (num > 10) num = 10; if (num < 0) num = 0; val = num.toString(); if(el && el.value !== val) el.value = val; }
+            window[objName][pIdx][itemId][field] = val; 
+            if (objName === 'scores_mochido') window.calculateMochidoTotals();
+            if (objName === 'scores_yeast') window.calculateYeastTotals();
+        }
+
+        window.calculateMochidoTotals = function() {
+            for (let p = 0; p < window.globalStore.participantCount; p++) {
+                let tot = 0; if (window.scores_mochido[p]) { for (let d in window.scores_mochido[p]) { let v = parseFloat(window.scores_mochido[p][d].nilai); if (!isNaN(v)) { tot += v; } } }
+                let avg = (tot / 4).toFixed(2); const totEl = document.getElementById(`tot_moc_${p}`); const avgEl = document.getElementById(`avg_moc_${p}`);
+                if(totEl) totEl.innerText = tot; if(avgEl) avgEl.innerText = avg;
+            }
+        }
+
+        window.calculateYeastTotals = function() {
+            for (let p = 0; p < window.globalStore.participantCount; p++) {
+                let tot = 0; if (window.scores_yeast[p]) { for (let d in window.scores_yeast[p]) { let v = parseFloat(window.scores_yeast[p][d].nilai); if (!isNaN(v)) { tot += v; } } }
+                let avg = (tot / 4).toFixed(2); const totEl = document.getElementById(`tot_yst_${p}`); const avgEl = document.getElementById(`avg_yst_${p}`);
+                if(totEl) totEl.innerText = tot; if(avgEl) avgEl.innerText = avg;
+            }
+        }
+
+        window.printRekapanTable = function() {
+            const container = document.getElementById('print-container');
+            const yearSelect = document.getElementById('mo-year-filter-rekap'); const batchSelect = document.getElementById('mo-batch-filter-rekap');
+            const yearFilter = yearSelect.options[yearSelect.selectedIndex]?.text || '-'; const batchFilter = batchSelect.options[batchSelect.selectedIndex]?.text || '-';
+            
+            const cleanHtml = (htmlStr) => {
+                return htmlStr
+                    .replace(/min-w-\[\d+px\]/g, '')
+                    .replace(/whitespace-nowrap/g, 'whitespace-normal')
+                    .replace(/text-(xs|sm|base|lg|xl|2xl)/g, '')
+                    .replace(/text-\[\d+px\]/g, '')
+                    .replace(/border-[a-zA-Z0-9-]+/g, ''); 
+            };
+
+            let tableHead = cleanHtml(document.querySelector('#view-rekapan thead').innerHTML);
+            let tableBody = cleanHtml(document.getElementById('mo-rekapan-tbody').innerHTML);
+            
+            let html = `<div style="background: white; color: black; font-family: sans-serif; width: 100%;">
+                <style>
+                    @page { size: landscape; margin: 4mm; } 
+                    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+                    table { width: 100%; border-collapse: collapse; table-layout: auto; border: 1px solid #000; } 
+                    table, table * { font-size: 7px !important; line-height: 1.3 !important; }
+                    th, td { border: 1px solid #000 !important; padding: 3px !important; vertical-align: middle; overflow-wrap: break-word; word-break: normal !important; min-width: 0 !important; width: auto !important; white-space: normal !important; } 
+                    
+                    th:nth-child(1), td:nth-child(1), th:nth-child(3), td:nth-child(3) { 
+                        white-space: nowrap !important; 
+                        word-break: keep-all !important; 
+                        min-width: max-content !important; 
+                        width: 1% !important; 
+                    }
+                    
+                    th { background-color: #79310e !important; color: white !important; text-align: center; font-weight: bold; } 
+                    .text-center { text-align: center; } 
+                    button, select { display: none !important; } 
+                    svg { display: none !important; } 
+                    .line-clamp-3 { -webkit-line-clamp: unset !important; overflow: visible !important; display: block !important; } 
+                    .bg-green-50, .bg-green-100 { background-color: #f0fdf4 !important; } 
+                    .bg-red-50, .bg-red-100 { background-color: #fef2f2 !important; } 
+                    .text-green-700 { color: #15803d !important; } 
+                    .text-red-700 { color: #b91c1c !important; } 
+                    div, span, p { white-space: normal !important; word-break: normal !important; }
+                    .inline-block { white-space: nowrap !important; word-break: normal !important; }
+                </style>
+                <div style="text-align: center; margin-bottom: 12px;">
+                    <h2 style="font-size: 14px !important; font-weight: 900; margin: 0; text-transform: uppercase; color: #79310e;">Rekapan Penilaian OJT BAKER</h2>
+                    <p style="font-size: 9px !important; margin: 4px 0 0 0;">Filter Tahun: ${yearFilter} | Batch: ${batchFilter}</p>
+                </div>
+                <table><thead>${tableHead}</thead><tbody>${tableBody}</tbody></table>
+            </div>`;
+            container.innerHTML = html; setTimeout(() => { window.print(); setTimeout(() => { container.innerHTML = ''; }, 1000); }, 300);
+        }
+
+        window.generateAndPrintPDF = function() {
+            const container = document.getElementById('print-container'); let html = '';
+            for (let i = 0; i < window.globalStore.participantCount; i++) {
+                const p = window.globalStore.selectedParticipants[i]; const pName = p ? p.namaPeserta : `Peserta ${i+1}`; const pId = p ? p.idPelamar : '-'; const s14 = window.participants_scale14[i] || {scores:{}}; const moc = window.scores_mochido[i] || {}; const yst = window.scores_yeast[i] || {};
+                
+                html += `<div class="${i > 0 ? 'page-break' : ''}" style="background: white; color: black; font-family: sans-serif; padding: 20px;">
+                    <style>@page { size: portrait; margin: 10mm; }</style>
+                    <div style="text-align: center; border-bottom: 2px solid #79310e; padding-bottom: 10px; margin-bottom: 20px;">
+                        <h2 style="font-size: 20px; font-weight: 900; margin: 0; text-transform: uppercase; color: #79310e;">Lembar Penilaian OJT BAKER</h2>
+                        <h3 style="font-size: 16px; font-weight: bold; margin: 5px 0 10px 0; color: #000;">${pName}</h3>
+                        <p style="font-size: 12px; margin: 3px 0 0 0;"><b>ID Pelamar:</b> ${pId} | <b>Batch:</b> ${window.globalStore.batch} | <b>Lokasi:</b> ${window.globalStore.flagship}</p>
+                        <p style="font-size: 12px; margin: 3px 0 0 0;"><b>Mentor:</b> ${window.globalStore.mentorName} | <b>Tanggal:</b> ${window.globalStore.date}</p>
+                    </div>
+                    
+                    <h3 style="font-size: 12px; font-weight: bold; background: #fef0c7; padding: 5px 10px; border-left: 4px solid #79310e; margin-bottom: 10px;">1. ASPEK PENILAIAN (TEKNIS & NON TEKNIS)</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 15px;">
+                        <tr><th style="border: 1px solid #ccc; padding: 6px; text-align: left; background: #fffbf0;">Kriteria</th><th style="border: 1px solid #ccc; padding: 6px; width: 60px; text-align: center; background: #fffbf0;">Nilai</th></tr>`;
+                
+                let tot14 = 0; 
+                scale14Categories.forEach(sec => { 
+                    html += `<tr><td colspan="2" style="border: 1px solid #ccc; padding: 6px; background: #fef0c7; font-weight: bold; font-size: 9px;">${sec.category}</td></tr>`; 
+                    sec.items.forEach(item => { 
+                        const val = s14.scores[item.id] || '-'; 
+                        if (val !== '-') tot14 += parseInt(val); 
+                        html += `<tr><td style="border: 1px solid #ccc; padding: 6px;">${item.name}</td><td style="border: 1px solid #ccc; padding: 6px; text-align: center; font-weight: bold; font-size: 12px;">${val}</td></tr>`; 
+                    }); 
+                });
+                
+                const avg14 = (tot14 / 6).toFixed(2); 
+                html += `<tr><td style="border: 1px solid #ccc; padding: 6px; text-align: right; font-weight: bold; background: #fffbf0;">Total Skor:</td><td style="border: 1px solid #ccc; padding: 6px; text-align: center; font-weight: bold;">${tot14}</td></tr>
+                    <tr><td style="border: 1px solid #ccc; padding: 6px; text-align: right; font-weight: bold; background: #fffbf0;">Rata-rata:</td><td style="border: 1px solid #ccc; padding: 6px; text-align: center; font-weight: bold; color: #d32f2f;">${avg14}</td></tr>
+                    </table>
+                    <div style="font-size: 10px; margin-bottom: 20px; border: 1px dashed #ccc; padding: 10px; border-radius: 5px;">
+                        <p style="margin: 0 0 5px 0;"><b>Hal yang perlu ditingkatkan:</b><br/>${s14.improvements || '-'}</p>
+                        <p style="margin: 0;"><b>Hal yang perlu dipertahankan:</b><br/>${s14.strengths || '-'}</p>
+                    </div>
+                    
+                    <h3 style="font-size: 12px; font-weight: bold; background: #fef0c7; padding: 5px 10px; border-left: 4px solid #79310e; margin-bottom: 10px;">2. TES PRAKTIK MOCHIDO</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 10px;">
+                        <tr><th style="border: 1px solid #ccc; padding: 5px; width: 30px; text-align: center; background: #fffbf0;">NO</th><th style="border: 1px solid #ccc; padding: 5px; text-align: left; background: #fffbf0;">Keterangan</th><th style="border: 1px solid #ccc; padding: 5px; width: 40px; text-align: center; background: #fffbf0;">Point</th><th style="border: 1px solid #ccc; padding: 5px; width: 50px; text-align: center; background: #fffbf0;">Nilai</th></tr>`;
+                
+                let totMoc = 0;
+                mochidoTasks.forEach(task => { 
+                    const sc = moc[task.id] || {nilai:'-'}; 
+                    if(sc.nilai && !isNaN(sc.nilai)) { totMoc += parseFloat(sc.nilai); } 
+                    html += `<tr>
+                        <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">${task.no}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px;">${task.name}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold;">${task.maxPoint}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold;">${sc.nilai||'-'}</td>
+                    </tr>`; 
+                });
+                const avgMoc = (totMoc / 4).toFixed(2); 
+                html += `<tr><td colspan="3" style="border: 1px solid #ccc; padding: 5px; text-align: right; font-weight: bold; background: #fffbf0;">Nilai Akhir (Total / 4):</td><td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold; color: #d32f2f;">${avgMoc}</td></tr></table>
+                    <div style="font-size: 10px; margin-bottom: 20px; padding: 5px; border-bottom: 1px dotted #ccc;"><b>Komentar Shift (Mochido):</b> ${window.globalStore.commentsMochido || '-'}</div>
+                    
+                    <h3 style="font-size: 12px; font-weight: bold; background: #fef0c7; padding: 5px 10px; border-left: 4px solid #79310e; margin-bottom: 10px;">3. TES PRAKTIK YEAST</h3>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 10px;">
+                        <tr><th style="border: 1px solid #ccc; padding: 5px; width: 30px; text-align: center; background: #fffbf0;">NO</th><th style="border: 1px solid #ccc; padding: 5px; width: 80px; text-align: center; background: #fffbf0;">Kategori</th><th style="border: 1px solid #ccc; padding: 5px; text-align: left; background: #fffbf0;">Keterangan</th><th style="border: 1px solid #ccc; padding: 5px; width: 40px; text-align: center; background: #fffbf0;">Point</th><th style="border: 1px solid #ccc; padding: 5px; width: 50px; text-align: center; background: #fffbf0;">Nilai</th></tr>`;
+                
+                let totYst = 0;
+                yeastTasks.forEach(task => { 
+                    const sc = yst[task.id] || {nilai:'-'}; 
+                    if(sc.nilai && !isNaN(sc.nilai)) { totYst += parseFloat(sc.nilai); } 
+                    html += `<tr><td style="border: 1px solid #ccc; padding: 5px; text-align: center;">${task.no}</td>`;
+                    if (task.cat) { 
+                        html += `<td style="border: 1px solid #ccc; padding: 5px; text-align: center; vertical-align: middle;" rowspan="${task.catSpan}">${task.cat}</td>`; 
+                    }
+                    html += `<td style="border: 1px solid #ccc; padding: 5px;">${task.name}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold;">${task.maxPoint}</td>
+                        <td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold;">${sc.nilai||'-'}</td>
+                    </tr>`; 
+                });
+                const avgYst = (totYst/4).toFixed(2); 
+                html += `<tr><td colspan="4" style="border: 1px solid #ccc; padding: 5px; text-align: right; font-weight: bold; background: #fffbf0;">Nilai Akhir (Total / 4):</td><td style="border: 1px solid #ccc; padding: 5px; text-align: center; font-weight: bold; color: #d32f2f;">${avgYst}</td></tr></table>
+                    <div style="font-size: 10px; margin-bottom: 20px; padding: 5px; border-bottom: 1px dotted #ccc;"><b>Komentar Shift (Yeast):</b> ${window.globalStore.commentsYeast || '-'}</div>
+                    
+                    <div style="margin-top: 15px; font-size: 11px;">
+                        <p><b>Status Rekomendasi Mentor:</b> <span style="padding: 2px 6px; border: 1px solid #000; border-radius: 4px; font-weight: bold; background: ${s14.status === 'Tidak Diluluskan' ? '#fee2e2' : '#dcfce7'}; -webkit-print-color-adjust: exact; print-color-adjust: exact;">${s14.status || 'Diluluskan'}</span></p>
+                        ${s14.status === 'Tidak Diluluskan' ? `<p><b>Alasan Penolakan:</b> ${s14.rejectionReason || '-'}</p>` : ''}
+                    </div>
+                    
+                    <div style="margin-top: 30px; display: flex; justify-content: space-between; text-align: center; font-size: 11px;">
+                        <div style="width: 45%;">
+                            <p style="margin-bottom: 10px;">Mentor,</p>
+                            ${window.globalStore.signatureDataUrl ? `<img src="${window.globalStore.signatureDataUrl}" style="height: 50px; object-fit: contain; margin: 0 auto; display: block;" />` : `<div style="height: 50px;"></div>`}
+                            <p style="font-weight: bold; text-decoration: underline; margin-top: 5px;">${window.globalStore.mentorName || '-'}</p>
+                        </div>`;
+                
+                const uApp = (window.userApprovals && window.userApprovals[i]) ? window.userApprovals[i] : {status: 'PENDING'}; 
+                const mApp = (window.moApprovals && window.moApprovals[i]) ? window.moApprovals[i] : {status: 'PENDING'};
+                
+                html += `<div style="width: 45%; border: 1px dashed #ccc; padding: 10px; background: #fffbf0; -webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                            <p style="margin: 0 0 10px 0; font-size: 10px; color: #953a0f;">Validasi Final (Otomatis Sistem)</p>
+                            <p style="font-size: 12px; font-weight: bold; margin: 5px 0;">USER: ${uApp.status==='OK'?'<span style="color:green;">OK</span>':uApp.status==='NOK'?'<span style="color:red;">NOK</span>':'PENDING'}</p>
+                            <p style="font-size: 12px; font-weight: bold; margin: 5px 0;">MO: ${mApp.status==='ACCEPT'||mApp.status==='OK'?'<span style="color:green;">ACCEPT</span>':mApp.status==='REJECT'||mApp.status==='NOK'?'<span style="color:red;">REJECT</span>':'PENDING'}</p>
+                        </div>
+                    </div>
+                </div>`; 
+            }
+            container.innerHTML = html; setTimeout(() => { window.print(); setTimeout(() => { container.innerHTML = ''; }, 1000); }, 200); 
+        }
+
+        let signatureGlobal = { canvas: null, ctx: null, isDrawing: false };
+        window.initGlobalSignature = function() {
+            const cv = document.getElementById('signatureCanvas_global'); if (!cv) return;
+            signatureGlobal.canvas = cv; signatureGlobal.ctx = cv.getContext('2d'); const sig = signatureGlobal;
+            const getPos = (e) => { const rect = cv.getBoundingClientRect(); const clientX = e.touches ? e.touches[0].clientX : e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY; return { x: clientX - rect.left, y: clientY - rect.top }; };
+            const start = (e) => { e.preventDefault(); if(window.viewMode==='READONLY') return; sig.isDrawing = true; const pos = getPos(e); sig.ctx.lineWidth = 2; sig.ctx.lineCap = 'round'; sig.ctx.lineJoin = 'round'; sig.ctx.strokeStyle = '#79310e'; sig.ctx.beginPath(); sig.ctx.moveTo(pos.x, pos.y); };
+            const drawMove = (e) => { if (!sig.isDrawing || window.viewMode==='READONLY') return; e.preventDefault(); const pos = getPos(e); sig.ctx.lineTo(pos.x, pos.y); sig.ctx.stroke(); };
+            const stop = () => { if (sig.isDrawing && window.viewMode!=='READONLY') { sig.isDrawing = false; window.syncSignatureToForms(); } };
+            cv.addEventListener('mousedown', start); cv.addEventListener('mousemove', drawMove); cv.addEventListener('mouseup', stop); cv.addEventListener('mouseleave', stop);
+            cv.addEventListener('touchstart', start, {passive: false}); cv.addEventListener('touchmove', drawMove, {passive: false}); cv.addEventListener('touchend', stop);
+        }
+        
+        window.clearGlobalSignature = function() { if (signatureGlobal.ctx) { signatureGlobal.ctx.clearRect(0, 0, signatureGlobal.canvas.width, signatureGlobal.canvas.height); window.globalStore.signatureDataUrl = null; document.querySelectorAll('.display-signature').forEach(img => img.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='); } }
+        window.syncSignatureToForms = function() { const dataUrl = signatureGlobal.canvas.toDataURL(); window.globalStore.signatureDataUrl = dataUrl; document.querySelectorAll('.display-signature').forEach(img => img.src = dataUrl); }
+
+        window.onload = function() { if(window.initGlobalSignature) window.initGlobalSignature(); if(window.lucide) window.lucide.createIcons(); }
+    </script>
+</body>
+</html>
